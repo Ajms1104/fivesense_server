@@ -1,0 +1,171 @@
+/* rank.module.css (높이 추가 축소 최종 버전) */
+
+.rank-component-wrapper {
+  font-family: 'Pretendard';
+}
+
+.tab-container {
+  display: flex;
+  margin-left: 10px;
+  position: relative;
+  left: 265px; 
+}
+
+.tab-button {
+  height: 30px;
+  width: 130px;
+  padding: 5px 12px; /* 세로 padding 감소 */
+  border: 1px solid #e0e0e0;
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  margin-right: 4px;
+  position: relative;
+  bottom: -1px; 
+}
+
+.tab-button.active {
+  background-color: #ffc107;
+  border-color:#ffc107;
+  color: #333;
+  z-index: 2; 
+}
+
+.stock-ranking-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: 5px; 
+  padding: 8px 14px; /* 세로 padding 감소 */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0; 
+  border-top-left-radius: 0; 
+  position: relative;
+  z-index: 1;
+  min-height: 350px; /* min-height 감소 */
+  display: flex;
+  flex-direction: column;
+}
+
+/*------------구분선------------*/
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px; /* margin-bottom 감소 */
+}
+.title {
+  font-size: 13px;
+  font-weight: 700;
+}
+.update-time {
+  font-size: 11px;
+  color: #888;
+  margin-left: 8px;
+}
+
+/*------------구분선------------*/
+.stocks-table {
+  width: 100%;
+  border-collapse: collapse; 
+  table-layout: fixed; 
+}
+.stocks-table th, .stocks-table td {
+  position: relative;
+  top:-5px;
+  padding: 1px 1px; /* 세로 padding 감소 */
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle; 
+}
+.stocks-table th {
+  text-align: right; 
+  font-weight: 400;
+  font-size: 10px;
+  color: #555;
+  background-color: #f8f9fa;
+  padding-bottom: 4px; /* padding-bottom 감소 */
+}
+.stocks-table .th-rank { width: 60%; text-align: left; }
+.stocks-table .th-price { width: 22%; }
+.stocks-table .th-change { width: 18%; }
+.stocks-table tbody tr:hover {
+  cursor: pointer;
+}
+
+/*------------구분선------------*/
+.td-name-cell {
+  text-align: right;
+  display: flex;
+  align-items: center;
+}
+.td-price, .td-change {
+  text-align: right;
+  font-weight: 400;
+  font-size: 11px;
+}
+.favorite-btn {
+  cursor: pointer;
+  font-size: 14px;
+  color: #ccc;
+  position: relative;
+  left: -30px;
+}
+.favorite-btn:hover { color: #f5c943; }
+.stock-name {
+  font-weight: 400;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+.rank {
+  font-size: 14px;
+  font-weight: 400;
+  min-width: 10px;
+  text-align: center;
+}
+.up { color: #ff3333; }
+.down { color: #5050ff; }
+
+/*------------구분선------------*/
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 8px; /* padding-top 감소 */
+  gap: 15px;
+}
+.pagination-controls button {
+  width: 100px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  padding: 2px 6px; /* 세로 padding 감소 */
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 11px;
+}
+.pagination-controls button:disabled {
+  background: #f8f8f8;
+  color: #ccc;
+  cursor: not-allowed;
+}
+.page-info {
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/*------------구분선------------*/
+.no-data {
+  min-width: 500px;
+  color: #888;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  flex-grow: 1;
+}
