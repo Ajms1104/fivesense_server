@@ -2,17 +2,17 @@
 import React, { useState } from 'react';
 
 // 로직 분리
-import { useTopStocks } from '../hooks/useTopStocks';
+import { useTopStocks } from '../Hooks/useTopStocks';
 
 // 레이아웃 컴포넌트들
-import StockChart from '../components/layout/StockChart/StockChart'
-import Chat from '../components/layout/chat/Chat';
-import Rank from '../components/layout/Rank/Rank';
-import Sidebar from '../components/layout/Sidebar/Sidebar';
-import Topbar from '../components/layout/Topbar/Topbar';
-import AiResult from '../components/layout/Airesult/airesult';
+import StockChart from '../Components/layout/StockChart/StockChart'
+import Chat from '../Components/layout/chat/Chat';
+import Rank from '../Components/layout/Rank/Rank';
+import Sidebar from '../Components/layout/Sidebar/Sidebar';
+import Topbar from '../Components/layout/Topbar/Topbar';
+import AiResult from '../Components/layout/Airesult/airesult';
 
-// 페이지 전용 스타일ㅇ
+// 페이지 전용 스타일
 import styles from '../styles/main.module.css';
 
 const Home = () => {
