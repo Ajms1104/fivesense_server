@@ -22,7 +22,6 @@ public class ChatController {
     }
 
     // 새로운 채팅 시작
-    // test
     @PostMapping
     public ResponseEntity<?> sendMessage(@RequestBody Map<String, String> request) {
         try {
