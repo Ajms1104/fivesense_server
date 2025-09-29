@@ -70,8 +70,22 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        # PostgreSQL 컨테이너의 환경 변수
+        env:
+          POSTGRES_DB: fivesense       # 테스트용 데이터베이스 이름
+          POSTGRES_USER: postgres  # 사용자 이름
+          POSTGRES_PASSWORD: 1234 # 비밀번호
+        # 컨테이너가 준비되었는지 확인하는 옵션 
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     
-    # 작업의 기본 디렉토리를 fivesense로 설정합니다.
     defaults:
       run:
         working-directory: ./fivesense
@@ -83,11 +97,19 @@ jobs:
       - name: Setup JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '21' # 프로젝트에 맞는 JDK 버전을 명시 (예: 11, 17)
+          java-version: '21' # 프로젝트에 맞는 JDK 버전 
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       
       - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Build with Gradle
+        env:
+          # Spring Boot가 이 환경 변수를 application.properties보다 우선적으로 사용합니다.
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fivesense
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: 1234
         run: ./gradlew build
