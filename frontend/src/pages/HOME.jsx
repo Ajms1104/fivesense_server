@@ -13,7 +13,7 @@ import Topbar from '../Components/layout/Topbar/Topbar';
 import AiResult from '../Components/layout/Airesult/airesult';
 
 // 페이지 전용 스타일
-import styles from '../styles/main.module.css';
+import styles from '../Styles/main.module.css';
 
 const Home = () => {
   //주식 데이터 로직 
