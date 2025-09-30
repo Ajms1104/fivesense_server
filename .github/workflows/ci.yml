@@ -90,6 +90,9 @@ jobs:
           KIWOOM_API_KEY: ${{ secrets.KIWOOM_API_KEY }}
           KIWOOM_API_SECRET: ${{ secrets.KIWOOM_API_SECRET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          
         run: ./gradlew build
 
       - name: Login to Docker Hub
