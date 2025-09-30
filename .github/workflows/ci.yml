@@ -84,6 +84,11 @@ jobs:
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: 1234
           SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+          KIWOOM_API_KEY: ${{ secrets.KIWOOM_API_KEY }}
+          KIWOOM_API_SECRET: ${{ secrets.KIWOOM_API_SECRET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        
+        
         run: ./gradlew build
       - name: Login to Docker Hub
         if: success()
