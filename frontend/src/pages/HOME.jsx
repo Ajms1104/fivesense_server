@@ -5,12 +5,12 @@ import React, { useState } from 'react';
 import { useTopStocks } from '../hooks/useTopStocks';
 
 // 레이아웃 컴포넌트들
-import StockChart from '../Components/layout/StockChart'
-import Chat from '../Components/layout/Chat';
-import Rank from '../Components/layout/Rank';
-import Sidebar from '../Components/layout/Sidebar';
-import Topbar from '../Components/layout/Topbar';
-import AiResult from '../Components/layout/Airesult';
+import StockChart from '../Components/layout/StockChart/StockChart.jsx'
+import Chat from '../Components/layout/Chat/Chat.jsx';
+import Rank from '../Components/layout/Rank/Rank.jsx';
+import Sidebar from '../Components/layout/Sidebar/Sidebar.jsx';
+import Topbar from '../Components/layout/Topbar/Topbar.jsx';
+import AiResult from '../Components/layout/Airesult/airesult.jsx';
 
 // 페이지 전용 스타일
 import styles from '../styles/main.module.css';
