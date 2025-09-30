@@ -6,7 +6,7 @@ import { useTopStocks } from '../hooks/useTopStocks';
 
 // 레이아웃 컴포넌트들
 import StockChart from '../Components/layout/StockChart/StockChart'
-import Chat from '../Components/layout/Chat';
+import Chat from '../Components/layout/Chat/Chat.jsx';
 import Rank from '../Components/layout/Rank/Rank';
 import Sidebar from '../Components/layout/Sidebar/Sidebar';
 import Topbar from '../Components/layout/Topbar/Topbar';
