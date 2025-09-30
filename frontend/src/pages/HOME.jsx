@@ -42,6 +42,7 @@ const Home = () => {
   };
 
   return (
+    
     // 페이지 전체 레이아웃
     <div className={styles.homeContainer}>
       {/*고정 컴포넌트 */}

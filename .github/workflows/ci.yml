@@ -110,6 +110,8 @@ jobs:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fivesense
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: 1234
+          SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+
         run: ./gradlew build
 
       - name: Login to Docker Hub
