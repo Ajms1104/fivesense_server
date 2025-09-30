@@ -79,7 +79,7 @@ jobs:
         run: chmod +x gradlew
     
       - name: Wait for PostgreSQL to start
-        run: sleep 10
+        run: sleep 15
 
       - name: Build with Gradle
         env:
@@ -92,7 +92,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-          
+
         run: ./gradlew build
 
       - name: Login to Docker Hub
