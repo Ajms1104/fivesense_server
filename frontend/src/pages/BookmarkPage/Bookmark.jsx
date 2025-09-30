@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 // 컴포넌트
-import Sidebar from '../../components/layout/Sidebar/Sidebar';
-import Topbar from '../../components/layout/Topbar/Topbar';
+import Sidebar from '../../Components/layout/Sidebar/Sidebar.jsx';
+import Topbar from '../../Components/layout/Topbar/Topbar.jsx';
 
 import style from './bookmark.module.css';
 
