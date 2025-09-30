@@ -1,4 +1,4 @@
-# .github/workflows/ci.yml (최종 완성본)
+# .github/workflows/ci.yml
 
 name: CI for Frontend and Backend
 
@@ -47,7 +47,6 @@ jobs:
       - name: Grant execute permission for Vite
         run: chmod +x ./node_modules/.bin/vite
       - name: Run tests
-        # 테스트 스크립트가 없을 경우를 대비해 항상 성공 처리
         run: npm test || exit 0
       - name: Build project
         run: npm run build
@@ -78,18 +77,21 @@ jobs:
           distribution: 'temurin'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+    
+      - name: Wait for PostgreSQL to start
+        run: sleep 10
+
       - name: Build with Gradle
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fivesense
           SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: 1234
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD || '1234' }}
           SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
           KIWOOM_API_KEY: ${{ secrets.KIWOOM_API_KEY }}
           KIWOOM_API_SECRET: ${{ secrets.KIWOOM_API_SECRET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        
-        
         run: ./gradlew build
+
       - name: Login to Docker Hub
         if: success()
         uses: docker/login-action@v2
