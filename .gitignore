@@ -1,4 +1,6 @@
 # 보안 및 개인 설정 파일
+fivesense/src/main/resources/application.properties
+../application.properties
 
 
 # 자동 생성되거나 로컬 데이터가 저장되는 폴더

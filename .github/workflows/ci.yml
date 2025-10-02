@@ -78,8 +78,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
     
-      - name: Wait for PostgreSQL to start
-        run: sleep 15
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to start..."
+          until nc -z localhost 5432; do
+            echo "PostgreSQL is unavailable - sleeping"
+            sleep 1
+          done
+          echo "PostgreSQL is up - executing command"
 
       - name: Build with Gradle
         env:
