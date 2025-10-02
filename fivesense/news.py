@@ -24,7 +24,7 @@ def DBconnect():
     global cur, conn
     try:
         conn = psycopg2.connect(
-            host='localhost',  #로컬호스트 바꾸기
+            host='localhost', 
             user='postgres',
             password='1234', #비밀번호
             dbname='fivesense'
