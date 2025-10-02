@@ -61,7 +61,7 @@ jobs:
         env:
           POSTGRES_DB: fivesense
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 1234
+          POSTGRES_PASSWORD: '1234'
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     defaults:
@@ -78,14 +78,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
     
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          echo "Waiting for PostgreSQL to start..."
-          until nc -z localhost 5432; do
-            echo "PostgreSQL is unavailable - sleeping"
-            sleep 1
-          done
-          echo "PostgreSQL is up - executing command"
+      - name: Wait for PostgreSQL to start
+        run: sleep 15
 
       - name: Build with Gradle
         env:
