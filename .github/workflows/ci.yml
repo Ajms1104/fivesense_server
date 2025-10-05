@@ -81,7 +81,7 @@ jobs:
         run: chmod +x gradlew
     
       - name: Wait for PostgreSQL to start
-        run: sleep 15
+        run: sleep 5
 
       - name: Build with Gradle
         env:
@@ -107,7 +107,7 @@ jobs:
         if: success()
         uses: docker/build-push-action@v4
         with:
-          context: ./fivesense
+          context: .
           file: ./fivesense/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fivesense:latest

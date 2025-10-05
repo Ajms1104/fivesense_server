@@ -47,7 +47,7 @@ public class KiwoomApiService {
 
     private String accessToken;
 
-    // 1. 생성자: 의존성 주입만 담당하도록 변경 (초기화 로직 제거)
+    // 생성자: 의존성 주입만 담당하도록 변경 (초기화 로직 제거)
     // WebClient.Builder를 주입받는 것이 Spring의 권장 방식입니다.
     public KiwoomApiService(SimpMessagingTemplate messagingTemplate, WebClient.Builder webClientBuilder) {
         this.messagingTemplate = messagingTemplate;
