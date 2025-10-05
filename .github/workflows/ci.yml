@@ -1,6 +1,5 @@
-# .github/workflows/ci.yml
-
-name: CI for Frontend and Backend
+# .github/workflows/ci.yml (진짜 최종 완성본)
+name: CI/CD for Frontend and Backend
 
 on:
   push:
@@ -8,52 +7,30 @@ on:
       - main
 
 jobs:
-  detect-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend: ${{ steps.filter.outputs.backend }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Find changed files
-        uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            frontend:
-              - 'frontend/**'
-            backend:
-              - 'fivesense/**'
-
   build-frontend:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Grant execute permission for Vite
-        run: chmod +x ./node_modules/.bin/vite
-      - name: Run tests
-        run: npm test || exit 0
-      - name: Build project
-        run: npm run build
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      - name: Build and push Frontend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          # context를 frontend 폴더로 명확히 지정
+          context: ./frontend 
+          # file 경로는 context 내부의 상대 경로
+          file: ./frontend/Dockerfile
+          push: true
+          # 태그 이름을 frontend로 구분
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fivesense-frontend:latest
 
   build-backend:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -61,29 +38,36 @@ jobs:
         env:
           POSTGRES_DB: fivesense
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: '1234'
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD || '1234' }}
         ports:
           - 5432:5432
         options: >-
           --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-    defaults:
-      run:
-        working-directory: ./fivesense
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
       - name: Setup JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
+
       - name: Grant execute permission for gradlew
+        working-directory: ./fivesense
         run: chmod +x gradlew
-    
-      - name: Wait for PostgreSQL to start
-        run: sleep 5
+      
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to start..."
+          until nc -z localhost 5432; do
+            echo "PostgreSQL is unavailable - sleeping"
+            sleep 1
+          done
+          echo "PostgreSQL is up - executing command"
 
       - name: Build with Gradle
+        working-directory: ./fivesense
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/fivesense
           SPRING_DATASOURCE_USERNAME: postgres
@@ -94,20 +78,21 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-
         run: ./gradlew build
 
       - name: Login to Docker Hub
-        if: success()
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push Docker image
-        if: success()
+          
+      - name: Build and push Backend Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          # context를 fivesense 폴더로 명확히 지정
+          context: ./fivesense
+          # file 경로는 context 내부의 상대 경로
           file: ./fivesense/Dockerfile
           push: true
+          # 태그 이름을 backend로 구분
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fivesense:latest

@@ -59,7 +59,7 @@ public class KiwoomApiService {
                 .build();
     }
 
-    // 2. 초기화 메서드: @PostConstruct 어노테이션을 사용하여 분리
+    // 초기화 메서드: @PostConstruct 어노테이션을 사용하여 분리
     // 이 메서드는 모든 의존성 주입(@Value 포함)이 완료된 후에 실행됩니다.
     @PostConstruct
     public void initialize() {

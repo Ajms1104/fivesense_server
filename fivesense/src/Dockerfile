@@ -1,11 +1,15 @@
-# 베이스 이미지 설정: 가볍고 안정적인 Java 21 실행 환경을 사용합니다.
+# fivesense/Dockerfile (최종 완성본)
 FROM openjdk:21-slim
 
-# 빌드된 JAR 파일의 경로를 변수로 지정합니다.
-ARG JAR_FILE=build/libs/*.jar
+# 작업 디렉토리를 /app으로 설정
+WORKDIR /app
 
-# 빌드된 JAR 파일을 컨테이너 안으로 복사하고, 이름을 app.jar로 통일합니다.
-COPY ${JAR_FILE} app.jar
+# Gradle 빌드로 생성된 JAR 파일을 컨테이너 안으로 복사
+# context가 ./fivesense 이므로, build 폴더를 바로 찾을 수 있음
+COPY build/libs/*.jar app.jar
 
-# 이 컨테이너가 시작될 때 실행할 명령어를 지정합니다.
+# 8080 포트를 외부에 노출
+EXPOSE 8080
+
+# 컨테이너가 시작될 때 실행할 명령어
 ENTRYPOINT ["java","-jar","/app.jar"]
