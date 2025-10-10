@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+
+# Build artifacts
+dist
+.vite
+
+# Misc
+.DS_Store
+.env
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
