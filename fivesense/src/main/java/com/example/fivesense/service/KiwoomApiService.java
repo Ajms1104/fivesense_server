@@ -90,7 +90,6 @@ public class KiwoomApiService {
             if (response != null) {
                 System.out.println("Token Response: " + response);
 
-                // <<-- 수정된 부분: 실제 로그에 찍힌 키 이름으로 변경 -->>
                 // 성공 코드는 "return_code"
                 if ("0".equals(String.valueOf(response.get("return_code")))) {
                     // 토큰 값은 "token"

@@ -54,11 +54,11 @@ const Home = () => {
           {renderChartSection()}
         </section>
         <div className={styles.divider}></div>
-        {/*메인 : 채팅 영역 */}
+        {/*채팅 영역 */}
         <section className={styles.chat_section}>
           <Chat />
         </section>
-        {/*메인 : AI 결과 영역 */}
+        {/* AI 결과 영역 */}
         <section className={styles.ai_result_section}>
           <AiResult />
         </section>
