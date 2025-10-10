@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 백엔드 서비스
+  backend:
+    # Docker Hub에서 받아올 이미지
+    image: ${{ secrets.DOCKERHUB_USERNAME }}/fivesense:latest
+    # 컨테이너 재시작 정책
+    restart: always
+    # 환경 변수는 .env 파일에서 읽어옴
+    env_file:
+      - ./.env
+    # DB 서비스가 먼저 실행된 후에 실행됨
+    depends_on:
+      - db
+
+  # 프론트엔드 서비스
+  frontend:
+    image: ${{ secrets.DOCKERHUB_USERNAME }}/fivesense-frontend:latest
+    restart: always
+    # 외부의 80번 포트와 컨테이너의 80번 포트를 연결 (웹 브라우저 접속용)
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  # 데이터베이스 서비스
+  db:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - ./.env
+    # 데이터를 영구적으로 보관하기 위한 볼륨 설정
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
