@@ -90,7 +90,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           # context를 fivesense 폴더로 명확히 지정
-          context: ../fivesense
+          context: ./fivesense
           # file 경로는 context 내부의 상대 경로
           file: ./fivesense/Dockerfile
           push: true
