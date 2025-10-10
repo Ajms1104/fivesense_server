@@ -99,7 +99,6 @@ public class KiwoomApiService {
                     // 실패 메시지는 "return_msg"
                     System.err.println("Token request failed: " + response.get("return_msg"));
                 }
-                // <<-- /수정된 부분 -->>
             }
         } catch (Exception e) {
             System.err.println("Error getting access token: " + e.getMessage());

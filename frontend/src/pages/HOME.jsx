@@ -54,7 +54,7 @@ const Home = () => {
           {renderChartSection()}
         </section>
         <div className={styles.divider}></div>
-        {/*채팅 영역 */}
+        {/* 채팅 영역 */}
         <section className={styles.chat_section}>
           <Chat />
         </section>
