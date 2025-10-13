@@ -16,10 +16,10 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # '빌더' 스테이지에서 생성된 .jar 파일만 복사
-COPY --from=builder /home/gradle/src/build/libs/*.jar app.jar
+COPY --from=builder /home/gradle/src/build/libs/*.jar /app/app.jar
 
 # 8080 포트
 EXPOSE 8080
 
 # 최종적으로 app.jar 파일을 실행
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
