@@ -13,6 +13,8 @@ services:
     # DB 서비스가 먼저 실행된 후에 실행됨
     depends_on:
       - db
+    networks:
+      - fivesense-net
 
   # 프론트엔드 서비스
   frontend:
@@ -23,6 +25,8 @@ services:
       - "15019:80"
     depends_on:
       - backend
+    networks:
+      - fivesense-net
 
   # 데이터베이스 서비스
   db:
@@ -33,6 +37,12 @@ services:
     # 데이터를 영구적으로 보관하기 위한 볼륨 설정
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - fivesense-net
 
+networks:
+  fivesense-net:
+    driver: bridge
+    
 volumes:
   pgdata:
