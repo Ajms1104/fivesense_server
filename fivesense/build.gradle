@@ -22,18 +22,17 @@ repositories {
 }
 
 dependencies {
-    implementation platform('org.springframework.boot:spring-boot-dependencies:3.2.5')
-    annotationProcessor platform('org.springframework.boot:spring-boot-dependencies:3.2.5')
-
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     
+    // devtools는 이제 완벽하게 관리됩니다.
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     
     runtimeOnly 'org.postgresql:postgresql'
+    
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -48,7 +47,10 @@ dependencies {
     implementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
 
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 tasks.named('test') {
@@ -59,6 +61,3 @@ tasks.withType(JavaCompile) {
     options.compilerArgs = ['-parameters']
 }
 
-bootRun {
-    sourceResources sourceSets.main
-}
