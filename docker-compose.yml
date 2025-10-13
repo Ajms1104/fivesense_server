@@ -12,7 +12,8 @@ services:
       - ./.env
     # DB 서비스가 먼저 실행된 후에 실행됨
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - fivesense-net
 
@@ -43,6 +44,6 @@ services:
 networks:
   fivesense-net:
     driver: bridge
-    
+
 volumes:
   pgdata:
