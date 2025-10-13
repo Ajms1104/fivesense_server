@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.5'
-    id 'io.spring.dependency-management' version '1.1.4' 
+    id 'org.springframework.boot' version '3.2.5' 
+    // id 'io.spring.dependency-management' version '1.1.5' 
 }
 
 group = 'com.example'
@@ -29,10 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     
-   
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     
-   
     runtimeOnly 'org.postgresql:postgresql'
     
     compileOnly 'org.projectlombok:lombok'
