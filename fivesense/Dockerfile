@@ -1,5 +1,5 @@
 # JDK와 Gradle이 모두 설치된 이미지를 사용하여, 소스코드를 .jar 파일로 빌드
-FROM gradle:jdk21-alpine AS builder
+FROM gradle:8.7-jdk21-alpine AS builder
 
 # 작업 디렉토리 설정
 WORKDIR /home/gradle/src
