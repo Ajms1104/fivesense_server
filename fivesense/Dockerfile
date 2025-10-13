@@ -11,7 +11,7 @@ COPY . .
 RUN gradle build -x test
 
 # 실제 애플리케이션 실행에 필요한 최소한의 JRE 환경만 사용
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
