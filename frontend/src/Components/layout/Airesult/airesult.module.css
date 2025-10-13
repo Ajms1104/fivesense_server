@@ -133,6 +133,7 @@
 .predictionResult { /*각 AI 예측 가격 영역 */
   padding: 10px; 
   border-radius: 6px; 
+  margin: 10px;
   text-align: center;
 }
 .predictionResult p {

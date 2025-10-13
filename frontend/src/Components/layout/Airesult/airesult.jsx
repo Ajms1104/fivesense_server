@@ -18,19 +18,19 @@ const formatNumber = (num) => {
 // 백엔드에서 받아올 데이터에 대한 더미(dummy) 데이터
 const dummyData = {
   totalPrediction: {
-    price: 60600,
+    price: 95000,
     changeRate: 1.17,
   },
   modelPredictions: {
     lstm: {
-      accuracy: 72,
-      predictedPrice: 60000,
-      changeRate: 0.17,
+      accuracy: 63,
+      predictedPrice: 95800,
+      changeRate: 0.84,
     },
     finbert: {
-      accuracy: 87,
-      predictedPrice: 60500,
-      changeRate: 1.00,
+      accuracy: 67,
+      predictedPrice: 96300,
+      changeRate: 1.37,
     },
     tft: {
       accuracy: 70,
@@ -87,8 +87,22 @@ const AiResult = () => {
         <div className={style.summaryHeader}>
           <p className={style.togletxt}>3가지의 AI가 종합 예측한</p>
           <select className={style.stockSelect}>
-            <option>삼성전자</option>
-            {/* 다른 주식 옵션들 */}
+            <option>기아</option> 
+            <option>넷마블</option> <option>농심</option> 
+            <option>두산</option> <option>대한항공</option> 
+            <option>롯데케미칼</option> 
+            <option>삼성SDI</option> <option>삼성물산</option> <option>삼성바이오로직스</option> <option>삼성생명</option> <option>삼성전자</option> 
+            <option>셀트리온</option> <option>신세계</option> <option>신한지주</option> 
+            <option>에코프로</option> <option>우리금융지주</option> 
+            <option>카카오</option> <option>카카오뱅크</option> <option>카카오페이</option> 
+            <option>쿠팡</option> <option>포스코퓨처엠</option> <option>포스코인터내셔널</option> 
+            <option>하나금융지주</option> <option>하이트진로</option> <option>한국전력</option> <option>한국조선해양</option> <option>한국타이어</option> <option>한미약품</option> 
+            <option>한화</option> <option>현대글로비스</option> <option>현대모비스</option> <option>현대자동차</option> <option>현대제철</option> 
+            <option>CJ제일제당</option> <option>HMM</option> <option>KB금융</option> <option>KB국민은행</option> 
+            <option>KT</option> 
+            <option>LG</option> <option>LG생활건강</option> <option>LG에너지솔루션</option> <option>LG유플러스</option> <option>LG전자</option> <option>LG화학</option> 
+            <option>NAVER</option> <option>POSCO</option> 
+            <option>SK</option> <option>SK바이오사이언스</option> <option>SK이노베이션</option> <option>SK하이닉스</option>
           </select>
           <p className={style.togletxt}>의 오늘 주가 변화 예측이에요</p>
         </div>
@@ -131,6 +145,7 @@ const AiResult = () => {
             changeRate={data.modelPredictions.finbert.changeRate}
             cardColor="#8c54ff"
           />
+            
           <AiResultCard
             modelName="TFT"
             dataType="재무재표 Data 학습"
@@ -139,6 +154,7 @@ const AiResult = () => {
             changeRate={data.modelPredictions.tft.changeRate}
             cardColor="#f0c419"
           />
+          
         </div>
       </div>
     </div>

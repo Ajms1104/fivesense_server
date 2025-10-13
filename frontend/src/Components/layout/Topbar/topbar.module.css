@@ -3,8 +3,8 @@
 /*상단바 CSS영역*/
 .top-bar{
   grid-area: topbar;
-  height: 70px;
-  width: 100vw;
+  height: 60px;
+  width: 100%;
   background-color: #ffffff;
   border-bottom: 1.5px solid var(--_, rgba(166, 166, 166, 0.85));;
 }
@@ -17,7 +17,7 @@
 }
 
 .user_btn{
-  position: relative; 
+  position:absolute; 
   border: none;
   padding: 0;
   cursor: pointer;
@@ -28,12 +28,12 @@
   height: 50px;
   cursor: pointer;
   position: relative;
-  top: 10px;
+  top: 5px;
   left: -30px;
 }
 
 .popup_btn{ /*팝업 이미지*/
-  height: 65px;
+  width: 83px;
 }
 
 .popup_txt{ /*로그인, 로그아웃*/
