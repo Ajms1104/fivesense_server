@@ -19,12 +19,15 @@ load_dotenv()
 client_id ="lVvoywr_bJN3244tpVGe"  #키 바꾸기
 client_secret = "U0hEkUQ4lX"
 
+#로컬, 서버 DB 다른 접근
+db_host = os.environ.get('DB_HOST', 'localhost')
+
 # DB 연결
 def DBconnect():
     global cur, conn
     try:
         conn = psycopg2.connect(
-            host='localhost', 
+            host=db_host, 
             user='postgres',
             password='1234', #비밀번호
             dbname='fivesense'
