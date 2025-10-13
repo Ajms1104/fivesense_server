@@ -8,7 +8,7 @@ WORKDIR /home/gradle/src
 COPY . .
 
 # Gradle을 사용하여 애플리케이션을 빌드
-RUN gradle build -x test
+RUN gradle build -x test --stacktrace
 
 # 실제 애플리케이션 실행에 필요한 최소한의 JRE 환경만 사용
 FROM eclipse-temurin:21-jre-alpine
