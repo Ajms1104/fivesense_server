@@ -20,7 +20,7 @@ services:
     restart: always
     # 외부의 80번 포트와 컨테이너의 80번 포트를 연결 (웹 브라우저 접속용)
     ports:
-      - "80:80"
+      - "15019:80"
     depends_on:
       - backend
 
