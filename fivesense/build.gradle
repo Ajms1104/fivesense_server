@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.5' 
-    // id 'io.spring.dependency-management' version '1.1.5' 
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.1.4' 
 }
 
 group = 'com.example'
@@ -22,6 +22,8 @@ repositories {
 }
 
 dependencies {
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.2.5')
+    annotationProcessor platform('org.springframework.boot:spring-boot-dependencies:3.2.5')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -32,7 +34,6 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     
     runtimeOnly 'org.postgresql:postgresql'
-    
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
@@ -47,6 +48,7 @@ dependencies {
     implementation 'com.theokanning.openai-gpt3-java:service:0.18.2'
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
