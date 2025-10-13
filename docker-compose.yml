@@ -16,6 +16,9 @@ services:
         condition: service_healthy
     networks:
       - fivesense-net
+      
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 
   # 프론트엔드 서비스
   frontend:

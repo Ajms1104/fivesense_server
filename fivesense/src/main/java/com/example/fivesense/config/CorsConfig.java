@@ -1,4 +1,4 @@
-package com.example.fivesense.config; // 학생분의 패키지 경로에 맞게 수정했습니다.
+package com.example.fivesense.config; 
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

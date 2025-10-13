@@ -5,7 +5,7 @@
   grid-area: sidebar;
   background-color: #ffffff;
   border-right: 1.5px solid var(--_, rgba(166, 166, 166, 0.85));
-  width: 260px;
+  width: 240px;
   height: 100vw;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -50,17 +50,17 @@
   font-weight: 800;
   line-height: normal;
   position: relative;
-  top: -35px;
+  top: -33px;
   left: 55px;
 }
 
 .side_btn { /*사이드바 폴드버튼*/
-  width: 50px;
+  width: 40px;
   height: 22px;
   cursor: pointer;
   position: relative;
-  top : -70px;
-  left: 200px;
+  top : -65px;
+  left: 195px;
 }
 
 .side_btn_png {
@@ -85,10 +85,10 @@
   font-family: 'Pretendard';
   font-size: 14px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 200;
   line-height: normal;
   position: relative;
-  left: 10px;
+  left: 14px;
   top: 5px
 }
 
@@ -103,13 +103,13 @@
   flex-shrink: 0;
   color: var(--, #3B413C);
   font-family: 'Pretendard';
-  font-size: 22px;
+  font-size: 20px;
   font-style: normal;
   font-weight: 300;
   line-height: normal;
   position: relative;
-  top: 5px;
-  left: -25px;
+  top: 3px;
+  left: -27px;
   cursor: pointer; 
 }
 
@@ -124,14 +124,14 @@
   flex-shrink: 0;
   color: var(--, #3B413C);
   font-family: 'Pretendard';
-  font-size: 20px;
+  font-size: 19px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   letter-spacing: 1px;
   position: relative;
-  top: 15px;
-  left: -24px;
+  top: 12px;
+  left: -26px;
   cursor: pointer; 
 }
 
@@ -159,10 +159,10 @@
   font-family: 'Pretendard';
   font-size: 14px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 200;
   line-height: normal;
   position: relative;
-  left: 15px;
+  left: 14px;
 }
 
 .today_btn{ /*오늘*/
@@ -256,10 +256,10 @@
   font-family: 'Pretendard';
   font-size: 14px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 200;
   line-height: normal; 
   position: relative;
-  left: 15px;
+  left: 14px;
   top: 20px;
 }
 
