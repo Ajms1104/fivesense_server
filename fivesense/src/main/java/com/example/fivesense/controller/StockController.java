@@ -78,7 +78,7 @@ public List<Map<String, Object>> getLatestNews(@RequestParam(value = "page", def
                     Map<String, Object> news = new HashMap<>();
                     news.put("title", rs.getString("title"));
                     news.put("link", rs.getString("link"));
-                    news.put("label",rs.getString("label"));
+                    //news.put("label",rs.getString("label"));
                     newsList.add(news);
                 }
                 idx++;

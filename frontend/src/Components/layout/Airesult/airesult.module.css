@@ -1,6 +1,6 @@
 .container { /*전체 영역*/
   font-family: 'Pretendard';
-  min-width: 400px;
+  min-width: 570px;
   min-height: 500px;
 }
 .tabContainer { /*설정 버튼 영역*/
