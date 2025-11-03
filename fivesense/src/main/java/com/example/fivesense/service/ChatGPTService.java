@@ -63,8 +63,12 @@ public class ChatGPTService {
             // 시스템 메시지 추가
             messages.add(new com.theokanning.openai.completion.chat.ChatMessage(
                 "system", 
-                "당신은 주식 투자 전문가입니다. 사용자의 질문에 대해 전문적이고 정확한 답변을 제공해주세요. " +
-                "주식 데이터나 뉴스 데이터가 필요한 경우, 제공된 함수를 사용하여 최신 정보를 조회한 후 답변해주세요."
+                "당신은 주식 투자 전문 AI 어시스턴트입니다. 다음 규칙을 반드시 따르세요:\n" +
+                "1. 사용자가 특정 주식의 주가, 차트, 시세, 가격 등을 물어보면 ALWAYS get_stock_chart 함수를 호출하세요.\n" +
+                "2. 거래량 상위 종목을 물어보면 get_top_volume_stocks 함수를 호출하세요.\n" +
+                "3. 뉴스나 최신 소식을 물어보면 get_latest_news 또는 search_news 함수를 호출하세요.\n" +
+                "4. 함수를 호출할 수 있는 상황에서는 절대 '정보를 제공할 수 없습니다'라고 답하지 마세요.\n" +
+                "5. 함수 호출 결과를 바탕으로 친절하고 전문적인 답변을 제공하세요."
             ));
             System.out.println("시스템 메시지 추가 완료");
             
@@ -94,7 +98,7 @@ public class ChatGPTService {
                     .functions(functions)
                     .functionCall(ChatCompletionRequest.ChatCompletionRequestFunctionCall.of("auto"))
                     .maxTokens(1500)  // 응답 길이 제한 (너무 크면 비용 증가 및 속도 저하)
-                    .temperature(0.7)
+                    .temperature(0.3)  // 낮은 값으로 함수 호출을 더 일관되게 (0.7→0.3)
                     .build();
             System.out.println("ChatCompletionRequest 생성 완료");
 
@@ -184,12 +188,20 @@ public class ChatGPTService {
         ChatFunction getStockChartFunction = ChatFunction.builder()
                 .name("get_stock_chart")
                 .description(
-                    "주식 차트 데이터를 조회합니다. " +
-                    "파라미터: " +
-                    "1) stock_code (필수, string): 주식 종목 코드 6자리. 반드시 숫자 6자리여야 합니다. " +
-                    "   예시: 삼성전자=005930, SK하이닉스=000660, 카카오=035720, NAVER=035420, 현대차=005380 " +
-                    "2) base_date (선택, string): 조회 기준일 yyyyMMdd 형식. 예: 20240101. 생략 시 오늘 날짜 " +
-                    "3) api_id (선택, string): API ID. 기본값 KA10081 사용"
+                    "주식의 현재 주가, 실시간 시세, 차트 데이터를 조회합니다. " +
+                    "사용자가 다음을 물어볼 때 ALWAYS 이 함수를 사용하세요:\n" +
+                    "- '삼성전자 주가', '현재 주가', '지금 주가'\n" +
+                    "- '주식 시세', '실시간 가격'\n" +
+                    "- '차트 보여줘', '주가 그래프'\n" +
+                    "파라미터:\n" +
+                    "1) stock_code (필수, string): 주식 종목 코드 6자리 숫자.\n" +
+                    "   주요 종목 예시:\n" +
+                    "   - 삼성전자=005930, SK하이닉스=000660\n" +
+                    "   - 카카오=035720, NAVER=035420\n" +
+                    "   - 현대차=005380, LG에너지솔루션=373220\n" +
+                    "   - 삼성바이오로직스=207940, 셀트리온=068270\n" +
+                    "2) base_date (선택, string): 조회 기준일 yyyyMMdd 형식. 생략 시 오늘 날짜\n" +
+                    "3) api_id (선택, string): API ID. 기본값 KA10081"
                 )
                 .executor(StockChartRequest.class, request -> {
                     // 이 부분은 실제로 실행되지 않고, 타입 정의용
@@ -279,7 +291,7 @@ public class ChatGPTService {
                     .model("gpt-3.5-turbo")
                     .messages(messages)
                     .maxTokens(1200)  // Function call 결과를 포함한 응답 생성
-                    .temperature(0.7)
+                    .temperature(0.5)  // 약간 낮은 값으로 더 정확한 답변 (0.7→0.5)
                     .build();
             
             System.out.println("Function call 후 최종 응답 생성 중...");
