@@ -62,7 +62,7 @@ public List<Map<String, Object>> getLatestNews(@RequestParam(value = "page", def
 
         System.out.println("데이터베이스 연결 시도 중...");
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/fivesense", "postgres", "1234")) {
+                "jdbc:postgresql://db:5432/fivesense", "postgres", "1234")) {
             System.out.println("데이터베이스 연결 성공!");
 
             PreparedStatement stmt = conn.prepareStatement(
