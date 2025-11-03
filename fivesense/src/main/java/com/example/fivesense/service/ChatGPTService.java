@@ -68,12 +68,17 @@ public class ChatGPTService {
             ));
             System.out.println("시스템 메시지 추가 완료");
             
-            // 이전 대화 내역 추가 (최근 10개 메시지)
-            List<ChatList> previousMessages = chatMessageRepository.findRecentMessagesByRoomId(roomId, 10);
+            // 이전 대화 내역 추가 (최근 3개 메시지만 - 토큰 제한 고려)
+            List<ChatList> previousMessages = chatMessageRepository.findRecentMessagesByRoomId(roomId, 3);
             System.out.println("이전 대화 내역 개수: " + previousMessages.size());
             for (ChatList msg : previousMessages) {
                 String role = "USER".equals(msg.getType()) ? "user" : "assistant";
-                messages.add(new com.theokanning.openai.completion.chat.ChatMessage(role, msg.getContent()));
+                // 너무 긴 메시지는 잘라내기 (최대 1000자)
+                String content = msg.getContent();
+                if (content.length() > 1000) {
+                    content = content.substring(0, 1000) + "... (생략)";
+                }
+                messages.add(new com.theokanning.openai.completion.chat.ChatMessage(role, content));
             }
             
             // 현재 사용자 메시지 추가
@@ -309,25 +314,25 @@ public class ChatGPTService {
                     
                     System.out.println("주식 차트 조회: " + stockCode + ", " + baseDate + ", " + apiId);
                     Map<String, Object> chartResult = kiwoomApiService.getDailyStockChart(stockCode, baseDate, apiId);
-                    return "주식 차트 데이터: " + chartResult.toString();
+                    return summarizeChartData(chartResult);
                     
                 case "get_top_volume_stocks":
                     System.out.println("거래량 상위 종목 조회");
                     Map<String, Object> volumeResult = kiwoomApiService.getDailyTopVolumeStocks();
-                    return "거래량 상위 종목: " + volumeResult.toString();
+                    return summarizeVolumeData(volumeResult);
                     
                 case "get_latest_news":
                     int page = arguments.has("page") ? arguments.get("page").asInt() : 1;
                     System.out.println("최신 뉴스 조회: 페이지 " + page);
                     List<Map<String, Object>> newsResult = getLatestNewsFromDB(page);
-                    return "최신 뉴스: " + newsResult.toString();
+                    return summarizeNewsList(newsResult);
                     
                 case "search_news":
                     String keyword = arguments.get("keyword").asText();
                     int searchPage = arguments.has("page") ? arguments.get("page").asInt() : 1;
                     System.out.println("키워드 뉴스 검색: " + keyword + ", 페이지 " + searchPage);
                     List<Map<String, Object>> searchResult = searchNewsByKeyword(keyword, searchPage);
-                    return "검색된 뉴스: " + searchResult.toString();
+                    return summarizeNewsList(searchResult);
                     
                 default:
                     return "알 수 없는 함수입니다: " + functionName;
@@ -337,6 +342,86 @@ public class ChatGPTService {
             e.printStackTrace();
             return "함수 실행 중 오류가 발생했습니다: " + e.getMessage();
         }
+    }
+    
+    /**
+     * 차트 데이터 요약 (토큰 절약)
+     */
+    private String summarizeChartData(Map<String, Object> chartResult) {
+        if (chartResult == null || chartResult.isEmpty()) {
+            return "차트 데이터를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("주식 차트 데이터:\n");
+        
+        // 주요 정보만 추출 (전체 데이터가 아닌 핵심 요약만)
+        if (chartResult.containsKey("output1")) {
+            Object output1 = chartResult.get("output1");
+            summary.append("기본 정보: ").append(output1.toString(), 0, Math.min(200, output1.toString().length())).append("\n");
+        }
+        
+        if (chartResult.containsKey("output2")) {
+            summary.append("최근 5일간의 차트 데이터 조회 완료\n");
+        }
+        
+        return summary.toString();
+    }
+    
+    /**
+     * 거래량 데이터 요약 (토큰 절약)
+     */
+    private String summarizeVolumeData(Map<String, Object> volumeResult) {
+        if (volumeResult == null || volumeResult.isEmpty()) {
+            return "거래량 데이터를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("거래량 상위 종목:\n");
+        
+        // 상위 5개 종목만 간략히 표시
+        if (volumeResult.containsKey("output")) {
+            Object output = volumeResult.get("output");
+            String outputStr = output.toString();
+            summary.append(outputStr.substring(0, Math.min(500, outputStr.length())));
+            if (outputStr.length() > 500) {
+                summary.append("... (더 보기)");
+            }
+        }
+        
+        return summary.toString();
+    }
+    
+    /**
+     * 뉴스 리스트 요약 (토큰 절약)
+     */
+    private String summarizeNewsList(List<Map<String, Object>> newsList) {
+        if (newsList == null || newsList.isEmpty()) {
+            return "뉴스를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("뉴스 목록:\n");
+        
+        // 최대 5개 뉴스만 표시
+        int count = 0;
+        for (Map<String, Object> news : newsList) {
+            if (count >= 5) break;
+            
+            String title = (String) news.get("title");
+            String label = (String) news.get("label");
+            
+            // 제목이 너무 길면 자르기
+            if (title != null) {
+                if (title.length() > 100) {
+                    title = title.substring(0, 100) + "...";
+                }
+                summary.append(++count).append(". [").append(label).append("] ").append(title).append("\n");
+            }
+        }
+        
+        if (newsList.size() > 5) {
+            summary.append("... 외 ").append(newsList.size() - 5).append("개 뉴스");
+        }
+        
+        return summary.toString();
     }
     
     /**
