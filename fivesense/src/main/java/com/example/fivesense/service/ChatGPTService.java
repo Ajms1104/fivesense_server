@@ -72,18 +72,8 @@ public class ChatGPTService {
             ));
             System.out.println("시스템 메시지 추가 완료");
             
-            // 이전 대화 내역 추가 (최근 3개 메시지만 - 토큰 제한 고려)
-            List<ChatList> previousMessages = chatMessageRepository.findRecentMessagesByRoomId(roomId, 3);
-            System.out.println("이전 대화 내역 개수: " + previousMessages.size());
-            for (ChatList msg : previousMessages) {
-                String role = "USER".equals(msg.getType()) ? "user" : "assistant";
-                // 너무 긴 메시지는 잘라내기 (최대 1000자)
-                String content = msg.getContent();
-                if (content.length() > 1000) {
-                    content = content.substring(0, 1000) + "... (생략)";
-                }
-                messages.add(new com.theokanning.openai.completion.chat.ChatMessage(role, content));
-            }
+            // 이전 대화 내역 제거 - 토큰 절약 및 컨텍스트 초과 방지
+            // 매 질문을 독립적으로 처리 (대화 연속성 없음)
             
             // 현재 사용자 메시지 추가
             messages.add(new com.theokanning.openai.completion.chat.ChatMessage("user", userMessage));
