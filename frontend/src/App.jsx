@@ -5,11 +5,13 @@ import HOME from './pages/HOME.jsx';
 import Bookmark from './pages/BookmarkPage/Bookmark.jsx';
 import Login from './pages/LoginPage/Login.jsx'; 
 import Join from './pages/JoinPage/Join.jsx';
+import Aichat from './pages/ChatPage/Chat.jsx';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<HOME />} />
+      <Route path="/aichat" element={<Aichat />} />
       <Route path="/bookmark" element={<Bookmark />} />
       <Route path="/login" element={<Login />} />
       <Route path="/join" element={<Join />} />

@@ -1,32 +1,86 @@
-/* src/styles/main.css */
+/* src/styles/main.module.css */
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
-
-/*CSS -> 자바스크립트 순서로 정리해둠*/
-
+/*sidebar는 왼쪽, topbar는 위쪽, main은 나머지 공간 차지.*/
 .homeContainer {
-    overflow-x: auto; /* 자식 요소가 너비를 초과할 경우 가로 스크롤바 생성 */
+  display: grid;
+  height: 100vh; /* vh = 화면 높이에 맞춰 100% 채우기 */
+  grid-template-columns: 280px 1fr; 
+  grid-template-rows: 85px auto; 
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
 }
 
-.main_content{
-  min-height: 1920px;
-  min-width: 1080px; 
+.sidebar_wrapper {
+  grid-area: sidebar;
+  /* 사이드바가 스크롤이 필요할 경우 */
+  overflow-y: auto; 
 }
 
-.chart_section{
-  position: absolute;
-  left: 280px;
-  top:85px;
+.topbar_wrapper {
+  grid-area: topbar;
 }
 
-.chat_section{
-  position: absolute;
-  top: 400px;
-  left: 900px;
+/*메인 콘텐츠*/
+.main_content {
+  grid-area: main;
+  display: flex;
+  padding: 20px;
+  gap: 20px; 
+  overflow: auto; /* 콘텐츠가 넘칠 경우 스크롤 생성. y축 */
 }
 
-.ai_result_section{
-  position: absolute;
-  left: 900px;
-  bottom: 80px;
+.chart_section {
+  flex: 0.85; /* 남는 공간을 모두 차지하도록 설정 */
+  min-width: 400px; /*최소 길이*/
+}
+
+/* AiResult와 Chat을 묶는 wrapper */
+.right_panel_wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0.2; 
+  width: 450px; 
+  gap: 20px;
+}
+
+/* [추가예정] 사이드바 접는 Fade-in. */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade_in {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+
+/* 반응형 웹 : 1024px 이하일 때 적용될 스타일.*/
+@media (max-width: 1024px) {
+  .homeContainer {
+    grid-template-columns: 1fr;
+    grid-template-areas: /*작아지면 사이드바를 숨김*/
+      "topbar"
+      "main";
+  }
+
+  .sidebar_wrapper {
+    display: none; 
+  }
+
+  .main_content {
+    flex-direction: column; 
+  }
+
+  .right_panel_wrapper {
+    width: 100%; 
+  }
+}
+
+/* 반응형 웹 : 모바일 화면에 적용될 스타일.*/
+@media (max-width: 768px) {
+  .main_content {
+    padding: 10px;
+    gap: 10px;
+  }
 }

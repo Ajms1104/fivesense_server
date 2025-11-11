@@ -1,297 +1,223 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+/* 사이드바 전체 레이아웃 */
 
-/*사이드바 CSS영역*/
-.sidebar{ /*aside, 사이드바 전체 영역*/
-  grid-area: sidebar;
+.sidebar {
   background-color: #ffffff;
-  border-right: 1.5px solid var(--_, rgba(166, 166, 166, 0.85));
-  width: 240px;
+  border-right: 1.5px solid rgba(166, 166, 166, 0.85);
+  width: 250px;
   height: 100%;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  position: absolute;
-}
-
-.sidebar-top{ /*로고 있는 영역*/
-  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-end;
+  padding: 10px;
+  gap: 20px; 
+  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out; /* [추가] 너비와 패딩 변경 시 애니메이션 효과 */
 }
 
-.logo-top{
-  width: 100%;
-  height: 54px;
+/* [추가예정] 사이드바가 접혔을 때의 스타일 */
+/*.sidebar.collapsed {
+  width: 100px;
+  padding: 20px 10px;
 }
 
-.logo_png{ /*로고 이미지*/
-  width: 40px;
-  height: 31px;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-  position: relative;
-  top: 14px;
-  left: 7px;
+/* [추가예정] 사이드바가 접혔을 때 텍스트 숨기기 */
+/*.sidebar.collapsed .logo_text,
+.sidebar.collapsed .nav_item span,
+.sidebar.collapsed .section_title,
+.sidebar.collapsed .history_menu,
+.sidebar.collapsed .news_list {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  white-space: nowrap; 
+  transition: opacity 0.2s, visibility 0.2s;
+} 
+/* */
+
+
+/* --- 상단 로고 및 토글 버튼 --- */
+.sidebar_top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 로고와 버튼을 양쪽 끝으로 */
 }
 
-.logoandhome{
+.logo_link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-decoration: none;
 }
 
-.logo-txt{ /*five_sense*/
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  color: #24AFCF;
-  font-family: 'Pretendard';
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 800;
-  line-height: normal;
-  position: relative;
-  top: -33px;
-  left: 55px;
-}
-
-.side_btn { /*사이드바 폴드버튼*/
+.logo_img {
   width: 40px;
-  height: 22px;
-  cursor: pointer;
-  position: relative;
-  top : -65px;
-  left: 195px;
+  height: auto;
 }
 
-.side_btn_png {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/*-----------구분선-----------*/
-/*메뉴 TOP 즐겨찾기, 검색*/
-.sidebar-menu-top{
-  width: 100%;
-  height: 150px;
-  position: relative;
-}
-
-/*-----------구분선-----------*/
-.menu-txt{ /*메뉴*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 200;
-  line-height: normal;
-  position: relative;
-  left: 14px;
-  top: 5px
-}
-
-.ai_chat_img{/*ai_chat 이미지*/
-  height: 25px;
-  position: relative;
-  left: 15px;
-  top:10px;
-}
-
-.ai_chat{ /*ai_chat*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
+.logo_text {
   font-size: 20px;
-  font-style: normal;
+  font-weight: 800;
+  color: #24AFCF;
+  margin: 0; 
+  /*transition: opacity 0.3s, visibility 0.3s; /* [추가예정] 사이드바 닫을 때 부드러운 숨김 처리 */
+}
+
+.toggle_button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- 메인 메뉴 섹션 (AI Chat, 즐겨찾기, 검색 기록) --- */
+.sidebar_main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* 메뉴 섹션 간의 간격 */
+  overflow-y: auto; /* 내용이 많아지면 스크롤 */
+}
+
+.menu_section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 제목과 내용 사이의 간격 */
+  border-top: 1.5px solid rgba(166, 166, 166, 0.85); /* 구분선 */
+  padding-top: 20px;
+}
+
+.section_title { /*메뉴*/
+  font-size: 14px;
   font-weight: 300;
-  line-height: normal;
-  position: relative;
-  top: 3px;
-  left: -27px;
-  cursor: pointer; 
+  color: #3B413C;
+  margin: 0;
+  padding: 0 10px;
+  /*transition: opacity 0.3s, visibility 0.3s; /* [추가예정] 사이드바 누를 경우 부드러운 숨김 처리 */
 }
 
-.bookmark_img{/*즐겨찾기 이미지*/
-  height: 25px;
-  position: relative;
-  left: 15px;
-  top: 17px;
+.nav_menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.bookmark{ /*즐겨찾기*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
-  font-size: 19px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: 1px;
-  position: relative;
-  top: 12px;
-  left: -26px;
-  cursor: pointer; 
-}
-
-.line_1{
-  width: 90%;
-  height: 1.5px;
-  background-color: rgba(166, 166, 166, 0.85);
-  position: relative;
-  left: 10px;
-  top : 20px;
-}
-
-/*-----------구분선-----------*/
-/*메뉴 중간 : 검색 기록 */
-.sidebar-menu-mid{
-  width: 100%;
-  height: 225px;
-  flex-direction: column; 
-  align-items: flex-start; 
-}
-
-.history_font{ /*검색 기록*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 200;
-  line-height: normal;
-  position: relative;
-  left: 14px;
-}
-
-.today_btn{ /*오늘*/
-  width: 80%;
-  height: 26px;
-  padding: 0 20px;
+.nav_item { 
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-radius: 100px; /*둥글게 깍기*/
-  background: var(--_, #f2f2f2);
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0.75px;
-  box-sizing: border-box;
-  white-space: nowrap; 
-  position: relative;
-  left: 15px;
-  top : 7px;
-  cursor: pointer;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #3B413C;
+  font-size: 18px;
+  transition: background-color 0.2s; /*메뉴에 커서 올리면 회색창 배경뜨는 거*/
 }
 
-.day_7_btn{ /*7일전*/
-  width: 80%;
-  padding: 0 20px;
+.nav_item:hover {
+  background-color: #f2f2f2;
+}
+
+.nav_item img {
+  width: 24px;
+  height: 24px;
+}
+
+.nav_item span {
+  /*transition: opacity 0.3s, visibility 0.3s; /* [추가예정] 사이드바 누를 경우 부드러운 숨김 처리 */
+}
+
+/* 검색 기록 */
+.history_menu {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 10px;
+  /*transition: opacity 0.3s, visibility 0.3s; /* [추가예정] 사이드바 누를 경우 부드러운 숨김 처리 */
+}
+
+.dropdown_toggle {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  position: relative;
-  left: 15px;
-  top:15px;
-  font-family: 'Pretendard';
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.line_2{
-  width: 1px;
-  height: 75%;
-  background-color: rgba(166,166,166,0.85);
-  position: relative;
-  left : 60px;
-  top : 5px;
-}
-
-.dropdownItem{
-  position: relative;
-  left: 10px;
-  top: -10px;
-  text-align: left;
-}
-
-.dplus-7-btn{ /*7일 전꺼*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard-Regular';
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: 0.75px;
-  position: relative;
-  left:53px;
-}
-
-.line_3{
-  width: 90%;
-  height: 1px;
-  background-color: rgba(166, 166, 166, 0.85);
-  position: relative;
-  left: 10px;
-  top : 20px;
-}
-
-/*-----------구분선-----------*/
-/*메뉴 하단 : 최신 뉴스*/
-.sidebar-menu-bottom{
+  padding: 8px 12px;
   width: 100%;
-  height: 100%;
-}
-
-.post{ /*최신 뉴스*/
-  flex-shrink: 0;
-  color: var(--, #3B413C);
-  font-family: 'Pretendard';
+  border-radius: 20px;
+  background-color: #f2f2f2;
   font-size: 14px;
-  font-style: normal;
-  font-weight: 200;
-  line-height: normal; 
-  position: relative;
-  left: 14px;
-  top: 20px;
+  font-weight: 500;
 }
 
-.post_bg{
+.down_icon {
+  transition: transform 0.3s ease; /* 아이콘 회전 애니메이션 */
+}
+
+.down_icon.rotated {
+  transform: rotate(180deg); /* 아이콘 180도 회전 */
+}
+
+.dropdown_menu {
+  padding: 10px 0 10px 20px;
   display: flex;
-  flex-direction: column; /* 자식 요소(뉴스)를 세로로 정렬 */
-  gap: 16px; /* 뉴스 아이템 사이의 간격 */
-  padding: 0 15px; /* 목록 전체의 좌우 여백 */
-  align-items: stretch;
-  position: relative;
-  top:30px
+  flex-direction: column;
+  gap: 10px;
+  border-left: 1px solid #e0e0e0;
+  margin-left: 15px;
 }
 
-.news-item a {
-  display: block; /* 링크가 전체 영역을 차지하도록 */
-  text-decoration: none; 
-  color: #3B413C; /* 기본 글자색 */
+.dropdown_item {
+  color: #3B413C;
+  text-decoration: none;
   font-size: 14px;
-  font-weight: 500; 
-  line-height: 1.4; /* 줄 간격 조절 */
-  transition: color 0.2s ease; /* 부드러운 색상 전환 효과 */
+}
+.dropdown_item:hover {
+  color: #24AFCF;
 }
 
-.news-item a:hover {
-  color: #24AFCF; /* 마우스를 올렸을 때 색상 변경 */
+/* --- 하단 최신 뉴스 --- */
+.sidebar_bottom {
+  border-top: 1.5px solid rgba(166, 166, 166, 0.85);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-/* 뉴스 로딩/에러 메시지 스타일 수정 */
-.news_error, .news-loading {
+.news_list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 10px;
+  /*transition: opacity 0.3s, visibility 0.3s; /* [추가예정] 사이드바 누를 경우 부드러운 숨김 처리 */
+}
+
+.news_item {
+  font-size: 14px;
+  color: #3B413C;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.news_item:hover {
+  color: #24AFCF;
+}
+
+.message_text {
   color: #888;
-  font-family: 'Pretendard';
   text-align: center;
-  padding: 20px 0; 
-  width: 100%;
+  font-size: 14px;
 }
+
+/* [추가 예정] 간단한 Fade-in 애니메이션 */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade_in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+

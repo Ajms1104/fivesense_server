@@ -1,54 +1,107 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+/* src/Components/layout/Topbar/topbar.module.css */
 
-/*상단바 CSS영역*/
-.top-bar{
-  grid-area: topbar;
-  height: 60px;
-  width: 100%;
-  background-color: #ffffff;
-  border-bottom: 1.5px solid var(--_, rgba(166, 166, 166, 0.85));;
+/* 기본 Topbar 레이아웃 */
+.topbar_container {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+    position: relative;
 }
 
-.user-bar{
-  height: 100%;  
-  display: flex;
-  flex-shrink: 0;
-  justify-content: right;
+.topbar_left, .topbar_right {
+    display: flex;
+    align-items: center;
 }
 
-.user_btn{
-  position:absolute; 
-  border: none;
-  padding: 0;
-  cursor: pointer;
+.user_profile_button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    border: 1px solid #e0e0e0;
+}
+.user_profile_button img {
+    width: 100%;
+    height: 100%;
 }
 
-.user{ /*USER 아이콘, 버튼임*/
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  position: relative;
-  top: 5px;
-  left: -30px;
+.user_popup {
+    position: absolute;
+    top: 70px;
+    right: 24px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 100;
+}
+.user_popup button {
+    padding: 8px 12px;
+    text-align: left;
+    width: 100%;
+}
+.user_popup button:hover {
+    background-color: #f8f9fa;
 }
 
-.popup_btn{ /*팝업 이미지*/
-  width: 83px;
+
+/* 모바일 전용 내비게이션  */
+.mobile_nav {
+    display: none; 
 }
 
-.popup_txt{ /*로그인, 로그아웃*/
-  color: #333; 
-  font-family: 'Pretendard';
-  font-size: 14px; 
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  top:-45px;
+
+/* 반응형 디자인  */
+
+/* 화면이 1024px 이하일 때 (사이드바가 사라지는 시점) */
+@media (max-width: 1024px) {
+    .topbar_container {
+        justify-content: flex-end;
+    }
+
+    .topbar_left {
+        display: none;
+    }
+
+    .mobile_nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f0f2f5;
+        padding: 6px;
+        border-radius: 10px;
+    }
+    .mobile_nav_link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        color: #555;
+        transition: all 0.2s ease-in-out;
+    }
+    .mobile_nav_link.active {
+        background-color: #24AFCF;
+        color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
 }
 
-.loginout_btn{
-  position: relative;
-  left: -5px;
-  top: 3px;
+@media (max-width: 768px) {
+    .topbar_container {
+        padding: 0 16px;
+    }
 }

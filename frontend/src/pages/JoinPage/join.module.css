@@ -1,115 +1,129 @@
-/* src/components/join/join.module.css */
+/* pages/JoinPage/join.module.css  */
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
-
-/* 전체 컨테이너: 화면 정중앙에 배치 */
-.join-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #ffffff;
+.page_container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 40px 20px;
 }
 
-.join-form {
-  background: #ffffff;
-  padding: 30px 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 420px;
+/* 회원가입 박스 */
+.join_box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 480px; 
+    animation: fadeIn 0.5s ease-out;
 }
 
-/*----------------구분선----------------*/
-.join-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 25px;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.join-logo-img {
-  width: 70px;
-  height: 50px;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-  position: relative;
-  left: -75px;
+/*  헤더 (로고) --- */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    gap: 12px;
+}
+.logo_image {
+    width: 70px;
+    height: 50px;
+}
+.logo_text {
+    color: #24AFCF;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
 }
 
-.join-logo-text { /*five_sense*/
-  width: 20px;
-  height: 20px;
-  color: #24AFCF;
-  font-family: 'Pretendard';
-  font-size: 28px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  position: relative;
-  left: -73px;
-  top:-7px;
+/* 회원가입 폼 */
+.join_form {
+    display: flex;
+    flex-direction: column;
+}
+.form_group {
+    margin-bottom: 16px; 
+}
+.form_group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+.form_group input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+.form_group input:focus {
+    outline: none;
+    border-color: #24AFCF;
 }
 
-/* 폼 입력 필드 그룹 (라벨 + 인풋) */
-.join-form-group {
-  margin-bottom: 18px;
+/* 에러 메시지 스타일 */
+.error_message {
+    color: #d84040;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: -8px; /* 위치 조정 */
+    margin-bottom: 16px;
 }
 
-.join-form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
+/*버튼 그룹*/
+.button_group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+.button_group button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+.button_group button:active {
+    transform: scale(0.98);
+}
+.button_group button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
-.join-form-group input {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 16px;
+.submit_join_btn {
+    background-color: #24AFCF; /* 로그인 페이지의 메인 버튼과 통일 */
+    color: white;
+}
+.submit_join_btn:hover:not(:disabled) {
+    background-color: #1a8a9f;
 }
 
-/* 메인 '회원가입' 버튼 */
-.submit-join-btn {
-  width: 100%;
-  padding: 13px;
-  background-color: #F5C943; /* 로그인 페이지의 메인 버튼 색상과 동일하게 */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
+.to_login_btn {
+    background-color: transparent;
+    color: #888;
+    font-weight: 500;
 }
-
-/* '이미 계정이 있으신가요?' 링크 영역 */
-.join-login-link {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 5px;
-}
-
-/* '로그인' 링크 버튼 스타일 (버튼처럼 보이지 않게) */
-.to-login-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.to-login-text {
-  color: #555;
-  font-size: 14px;
-  font-weight: 500;
-  margin: 0;
-}
-
-.to-login-text:hover {
-  text-decoration: underline;
+.to_login_btn:hover:not(:disabled) {
+    color: #333;
+    text-decoration: underline;
 }

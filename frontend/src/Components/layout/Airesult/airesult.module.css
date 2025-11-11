@@ -1,154 +1,156 @@
-.container { /*전체 영역*/
-  font-family: 'Pretendard';
-  min-width: 570px;
-  min-height: 500px;
+/* airesult.module.css */
+
+.container {
+  font-family: 'Pretendard', sans-serif;
+  width: 100%;
 }
-.tabContainer { /*설정 버튼 영역*/
+
+/*탭 스타일 */
+.tab_container {
   display: flex;
-  gap: 6px; 
-  margin-bottom: 12px; 
+  position: relative; 
+  border-bottom: 1px solid #e0e0e0;
 }
-.tabButton { /*설정 버튼*/
-  height: 30px;
-  width: 100px; 
-  padding: 6px 0; /* 세로 패딩 추가 */
-  border-radius: 6px 6px 0 0; 
-  color: #888;
+.tab_button {
+  padding: 10px 16px;
+  border: none;
+  background-color: transparent;
   cursor: pointer;
-  font-size: 12px; 
-  font-weight: 600;
-  position: relative;
-  bottom: 77px; 
-  right: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  transition: color 0.3s;
 }
-.tabButton.active { /*설정 버튼 배경*/
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: #333;
-}
-.content { /*메인 상자*/
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
-  padding: 12px; 
-}
-.summaryHeader { /*설명글 영역*/
-  display: flex;
-  align-items: center;
-  gap: 5px; 
-  font-size: 11px; 
-}
-.togletxt{ /*토글 앞뒤 문장*/
-    font-family: 'Pretendard';
-    font-size: 11px; 
-    font-weight: 400;
-}
-.stockSelect { /*주식 선택 영역(토글)*/
-  padding: 3px 6px; 
-  border: 1px solid #e0e0e0;
-  border-radius: 5px; 
-  font-family: 'Pretendard';
-  font-size: 11px; 
-}
-.totalPredictionSection { /*AI total 평가예측*/
-  display: flex;
-  align-items: center;
-  gap: 10px; 
-  margin-bottom: 10px; 
-  position: relative;
-  bottom: 22px; 
-}
-.totalTitle { /*주가 변화 예측*/
-  font-size: 12px; 
-  color: #333;
-  font-weight: 600;
-  margin: 0;
-}
-.totalPrice { /*예측 금액*/
-  font-size: 18px; 
-  color: #ff3333;
+.tab_button.active {
+  color: #24AFCF; 
   font-weight: 700;
-  margin: 2px 0;
 }
-.totalChangeRate { /*변화율*/
-  font-size: 11px; 
-  color: #ff3333;
-  margin: 0;
+.active_indicator {
+  position: absolute;
+  bottom: -1px;
+  height: 2px;
+  background-color: #24AFCF;
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
-.priceRangeBar { /*AI 그래프*/
-  flex-grow: 1;
-  height: 16px; 
-  background-color: #f0f0f0;
-  border-radius: 8px; 
-  position: relative;
+
+/* 콘텐츠 컨테이너 */
+.content_container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+}
+
+/*헤더*/
+.summaryHeader {
   display: flex;
   align-items: center;
+  gap: 8px; 
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 20px;
 }
-/*----------------구분선---------------*/
-.modelCardsContainer { /*각 AI 별 수치 영역*/
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px; 
-  position: relative;
-  bottom: 12px; 
-}
-.modelCard { /*각 AI 별 카드*/
+.stockSelect {
+  padding: 4px 8px; 
   border: 1px solid #e0e0e0;
-  border-radius: 8px; 
-  padding: 10px; 
-}
-.modelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px; 
-}
-.modelTitle {
+  border-radius: 4px; 
   font-family: 'Pretendard';
-  font-size: 14px; 
+  font-size: 13px; 
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* 색상 정의 */
+.up { color: #d84040; }
+.down { color: #3b64d8; }
+
+/* 종합 예측 섹션 */
+.totalPredictionSection {
+  display: flex;
+  align-items: center;
+  gap: 16px; 
+  margin-bottom: 16px; 
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.totalPriceInfo { text-align: left; }
+.totalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #333;
+}
+.totalPrice {
+  font-size: 22px; 
   font-weight: 500;
   margin: 0;
 }
-.dataType { /*()Data 학습*/
-  font-size: 9px; 
-  color: #777;
-  background-color: #eaeaea83;
-  padding: 2px 5px; 
-  border-radius: 8px; 
+.totalChangeRate {
+  font-size: 14px; 
+  font-weight: 500;
+  margin: 2px 0 0 0;
 }
-.accuracySection { /*정확도*/
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px; 
-  margin-bottom: 3px; 
-}
-.progressBarContainer {/*정확도 바*/
-  width: 100%;
-  height: 4px; 
-  background-color: #e0e0e0;
+.priceRangeBar {
+  flex-grow: 1; height: 20px; 
+  background-color: #f8f9fa; 
   border-radius: 2px; 
-  overflow: hidden;
-  margin-bottom: 8px; 
 }
-.predictionResult { /*각 AI 예측 가격 영역 */
-  padding: 10px; 
-  border-radius: 6px; 
-  margin: 10px;
-  text-align: center;
+
+/* AI 모델 카드 */
+@keyframes progressBarAnimation {
+    from { width: 0%; }
 }
-.predictionResult p {
-  margin: 1px 0; 
+.modelCardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
 }
-.predictionResult p:first-child { /*날짜와 종목*/
-  font-size: 9px; 
-  color: #777;
+.modelCard {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #fff;
 }
-.predictedPrice { /*가격*/
-  font-size: 16px; 
-  font-weight: 700;
+.modelHeader {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px; 
+}
+.modelTitle {
+  font-size: 14px;
+  font-weight: 500; 
+  margin: 0;
   color: #333;
 }
-.changeRate { /*상승일 경우*/
-  font-size: 11px; 
-  color: #e94266;
+.dataType {
+  font-size: 10px; color: #666; background-color: #f0f2f5;
+  padding: 3px 6px; border-radius: 8px; 
+}
+.accuracySection {
+  display: flex; justify-content: space-between;
+  font-size: 12px; margin-bottom: 4px; color: #555;
+}
+.progressBarContainer {
+  width: 100%; height: 5px; background-color: #e9ecef;
+  border-radius: 2.5px; overflow: hidden; margin-bottom: 8px; 
+}
+.progressBar {
+  height: 100%;
+  border-radius: 2.5px;
+  animation: progressBarAnimation 1s ease-out forwards;
+}
+.predictionResult {
+  padding: 10px; 
+  border-radius: 8px; 
+  text-align: center;
+}
+.predictionResult p { margin: 2px 0; }
+.predictionResult p:first-child {
+  font-size: 11px; color: #555;
+}
+.predictedPrice {
+  font-size: 16px; 
+  font-weight: 700;
+}
+.changeRate {
+  font-size: 12px; 
+  font-weight: 500;
 }

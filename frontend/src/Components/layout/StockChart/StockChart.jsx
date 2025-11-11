@@ -1,27 +1,33 @@
+// src/Components/layout/StockChart/StockChart.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 import styles from './stockChart.module.css'; 
 
+// 디바운스 헬퍼 함수
+function debounce(func, timeout = 200) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+
+// 하위 컴포넌트 1: 차트 헤더
 const ChartHeader = ({ stockInfo, isLoading }) => {
-  if (isLoading || !stockInfo) {
-    return <div className={styles['header-loading']}>종목 정보를 불러오는 중...</div>;
+  if (isLoading || !stockInfo?.name) {
+    return <div className={styles.header_skeleton} />;
   }
-  
-  if (!stockInfo.name || stockInfo.price === undefined || stockInfo.changeAmount === undefined) {
-    return <div className={styles['header-loading']}>종목 정보를 불러오는 중...</div>;
-  }
-  
   return (
-    <div className={styles['chart-header']}>
-      <div className={styles['stock-identity']}>
-        <div className={styles['stock-logo']}>{stockInfo.name.charAt(0)}</div> {/* 현재 종목 별 로고 없음 */}
-        <h2>{stockInfo.name}</h2> {/* 현재 종목 코드 넘어오는 중*/}
+    <div className={styles.chart_header}>
+      <div className={styles.stock_identity}>
+        <div className={styles.stock_logo}>{stockInfo.name.charAt(0)}</div>
+        <h2>{stockInfo.name}</h2>
       </div>
-      <div className={styles['stock-price-info']}>
-        <span className={`${styles['current-price']} ${styles[stockInfo.changeType]}`}>
+      <div className={styles.stock_price_info}>
+        <span className={`${styles.current_price} ${styles[stockInfo.changeType]}`}>
           {stockInfo.price.toLocaleString()}원
         </span>
-        <span className={`${styles['change-amount']} ${styles[stockInfo.changeType]}`}>
+        <span className={`${styles.change_amount} ${styles[stockInfo.changeType]}`}>
           {stockInfo.changeAmount >= 0 ? '▲' : '▼'} {Math.abs(stockInfo.changeAmount).toLocaleString()} ({stockInfo.changeRate}%)
         </span>
       </div>
@@ -29,43 +35,37 @@ const ChartHeader = ({ stockInfo, isLoading }) => {
   );
 };
 
+// 하위 컴포넌트 2: 메인 탭
 const MainTabs = () => (
-  <div className={styles['main-tabs']}>
-    <button className={`${styles['tab-button']} ${styles.active}`}>차트·호가</button>
-    {/* 아직 정보 안 넘어옴 */}
-    <button className={styles['tab-button']}>종목정보</button>
-    <button className={styles['tab-button']}>뉴스·공시</button>
-    <button className={styles['tab-button']}>커뮤니티</button>
+  <div className={styles.main_tabs}>
+    <button className={`${styles.tab_button} ${styles.active}`}>차트</button>
+    <button className={styles.tab_button}>종목정보</button>
+    <button className={styles.tab_button}>뉴스·공시</button>
   </div>
 );
 
+// 하위 컴포넌트 3: 차트 컨트롤
 const ChartControls = ({ chartType, onChartTypeChange }) => (
-  <div className={styles['chart-controls']}>
-    <div className={styles['timeframe-selector']}>
+  <div className={styles.chart_controls}>
+    <div className={styles.timeframe_selector}>
       {['1분', '일', '주', '월', '년'].map(type => (
-        <button
-          key={type}
-          className={chartType === type ? styles.active : ''}
-          onClick={() => onChartTypeChange(type)}
-        >
+        <button key={type} className={chartType === type ? styles.active : ''} onClick={() => onChartTypeChange(type)}>
           {type}
         </button>
       ))}
     </div>
-    {/*
-    <div className={styles['tool-selector']}>
-      <button>+ 보조지표</button>
-      <button>그리기</button>
-      <button>종목비교</button>
-      <button>📊</button>
-      <button>🗑️</button>
-      <button>차트 크게보기 ↗</button>
-    </div>
-    */}
   </div>
 );
 
-// --- 메인 차트 컴포넌트 ---
+// 하위 컴포넌트 4: 로딩 스켈레톤 UI
+const ChartSkeleton = () => (
+  <div className={styles.skeleton_container}>
+    <div className={`${styles.skeleton} ${styles.skeleton_price}`} />
+    <div className={`${styles.skeleton} ${styles.skeleton_volume}`} />
+  </div>
+);
+
+//메인 차트 컴포넌트
 const StockChart = ({ stockCode = '005930' }) => {
   const priceChartContainerRef = useRef(null);
   const volumeChartContainerRef = useRef(null);
@@ -76,182 +76,63 @@ const StockChart = ({ stockCode = '005930' }) => {
   const [stockInfo, setStockInfo] = useState(null);
   const [chartType, setChartType] = useState('일');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 차트 초기화 및 리사이즈 로직
   useEffect(() => {
-    if (!priceChartContainerRef.current || !volumeChartContainerRef.current) {
-      console.log('차트 컨테이너가 아직 준비되지 않았습니다.');
-      return;
-    }
+    if (!priceChartContainerRef.current || !volumeChartContainerRef.current) return;
 
-    console.log('차트 컨테이너 크기:', {
-      price: {
-        width: priceChartContainerRef.current.clientWidth,
-        height: priceChartContainerRef.current.clientHeight
-      },
-      volume: {
-        width: volumeChartContainerRef.current.clientWidth,
-        height: volumeChartContainerRef.current.clientHeight
-      }
-    });
+    const chartOptions = {
+      layout: { background: { color: 'transparent' }, textColor: '#333333', fontFamily: 'Pretendard' },
+      grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
+      crosshair: { mode: CrosshairMode.Normal },
+      timeScale: { borderColor: '#dddddd', borderVisible: true, timeVisible: true, secondsVisible: false },
+      rightPriceScale: { borderColor: '#dddddd', borderVisible: true, scaleMargins: { top: 0.1, bottom: 0.2 } },
+      watermark: { visible: false },
+    };
 
-    // 차트 생성
-    const priceChart = createChart(priceChartContainerRef.current, {
-      width: Math.max(priceChartContainerRef.current.clientWidth, 100),
-      height: Math.max(priceChartContainerRef.current.clientHeight, 100),
-      layout: {
-        background: { color: '#ffffff' },
-        textColor: '#333333',
-        fontFamily: "'Open Sans', sans-serif"
-      },
-      grid: {
-        vertLines: { color: '#f0f0f0' },
-        horzLines: { color: '#f0f0f0' }
-      },
-      crosshair: {
-        mode: CrosshairMode.Normal,
-        vertLine: {
-          color: '#999999',
-          width: 1,
-          style: 1,
-          labelBackgroundColor: '#ffffff'
-        },
-        horzLine: {
-          color: '#999999',
-          width: 1,
-          style: 1,
-          labelBackgroundColor: '#ffffff'
-        }
-      },
-      timeScale: {
-        borderColor: '#dddddd',
-        borderVisible: true,
-        timeVisible: true,
-        secondsVisible: false
-      },
-      rightPriceScale: {
-        borderColor: '#dddddd',
-        borderVisible: true,
-        scaleMargins: { top: 0.1, bottom: 0.1 }
-      }
-    });
-
+    const priceChart = createChart(priceChartContainerRef.current, chartOptions);
     const volumeChart = createChart(volumeChartContainerRef.current, {
-      width: Math.max(volumeChartContainerRef.current.clientWidth, 100),
-      height: Math.max(volumeChartContainerRef.current.clientHeight, 100),
-      layout: {
-        background: { color: '#ffffff' },
-        textColor: '#333333',
-        fontFamily: "'Open Sans', sans-serif"
-      },
-      grid: {
-        vertLines: { color: '#f0f0f0' },
-        horzLines: { color: '#f0f0f0' }
-      },
-      crosshair: {
-        mode: CrosshairMode.Normal,
-        vertLine: {
-          color: '#999999',
-          width: 1,
-          style: 1,
-          labelBackgroundColor: '#ffffff'
-        },
-        horzLine: {
-          color: '#999999',
-          width: 1,
-          style: 1,
-          labelBackgroundColor: '#ffffff'
-        }
-      },
-      timeScale: {
-        borderColor: '#dddddd',
-        borderVisible: true,
-        timeVisible: true,
-        secondsVisible: false
-      },
-      rightPriceScale: {
-        borderColor: '#dddddd',
-        borderVisible: true,
-        scaleMargins: { top: 0.1, bottom: 0.1 }
-      }
+      ...chartOptions,
+      rightPriceScale: { ...chartOptions.rightPriceScale, scaleMargins: { top: 0.2, bottom: 0 } },
     });
 
-    console.log('차트 생성 완료:', { priceChart, volumeChart });
-
-    // 시리즈 생성
     candlestickSeriesRef.current = priceChart.addCandlestickSeries({
-      upColor: '#ff3333',
-      downColor: '#5050ff',
-      borderVisible: false,
-      wickUpColor: '#ff3333',
-      wickDownColor: '#5050ff'
+      upColor: '#d84040', downColor: '#3b64d8', borderVisible: false, wickUpColor: '#d84040', wickDownColor: '#3b64d8'
     });
-
     volumeSeriesRef.current = volumeChart.addHistogramSeries({
-      color: '#26a69a',
-      priceFormat: { type: 'volume' }
-    });
-
-    console.log('시리즈 생성 완료:', { 
-      candlestick: candlestickSeriesRef.current, 
-      volume: volumeSeriesRef.current 
+      priceFormat: { type: 'volume' },
     });
 
     chartRef.current = { priceChart, volumeChart };
 
-    // 리사이즈 핸들러
     const handleResize = () => {
-      if (priceChartContainerRef.current && volumeChartContainerRef.current && chartRef.current) {
-        const priceWidth = Math.max(priceChartContainerRef.current.clientWidth, 100);
-        const priceHeight = Math.max(priceChartContainerRef.current.clientHeight, 100);
-        const volumeWidth = Math.max(volumeChartContainerRef.current.clientWidth, 100);
-        const volumeHeight = Math.max(volumeChartContainerRef.current.clientHeight, 100);
-        
-        console.log('차트 리사이즈:', { priceWidth, priceHeight, volumeWidth, volumeHeight });
-        
-        chartRef.current.priceChart.resize(priceWidth, priceHeight);
-        chartRef.current.volumeChart.resize(volumeWidth, volumeHeight);
+      if (chartRef.current && priceChartContainerRef.current && volumeChartContainerRef.current) {
+        priceChart.resize(priceChartContainerRef.current.clientWidth, priceChartContainerRef.current.clientHeight);
+        volumeChart.resize(volumeChartContainerRef.current.clientWidth, volumeChartContainerRef.current.clientHeight);
       }
     };
+    const debouncedResize = debounce(handleResize, 200);
 
-    window.addEventListener('resize', handleResize);
-    
-    // 초기 리사이즈 실행
-    setTimeout(handleResize, 100);
+    window.addEventListener('resize', debouncedResize);
+    setTimeout(handleResize, 50);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', debouncedResize);
       if (chartRef.current) {
-        try {
-          if (chartRef.current.priceChart) {
-            chartRef.current.priceChart.remove();
-          }
-          if (chartRef.current.volumeChart) {
-            chartRef.current.volumeChart.remove();
-          }
-        } catch (e) {
-          console.log('차트 제거 중 오류:', e);
-        }
-        chartRef.current = null;
-        candlestickSeriesRef.current = null;
-        volumeSeriesRef.current = null;
+        chartRef.current.priceChart.remove();
+        chartRef.current.volumeChart.remove();
       }
     };
   }, []);
 
-  // 데이터 로딩 및 차트 업데이트 로직
+  // [Phase 2: 데이터 로딩]
   useEffect(() => {
-    if (!candlestickSeriesRef.current || !volumeSeriesRef.current) {
-      console.log('차트 시리즈가 아직 준비되지 않았습니다.');
-      return;
-    }
+    if (!candlestickSeriesRef.current || !volumeSeriesRef.current) return;
 
-    const fetchChartData = async () => {
-      console.log('차트 데이터 로딩 시작:', { stockCode, chartType });
-      setStockInfo(null);
+    const fetchData = async () => {
+      setIsLoading(true);
       setError(null);
       try {
-        // chartType을 apiId로 변환
         let apiId;
         let requestData = { stk_cd: stockCode, upd_stkpc_tp: "1" };
         
@@ -264,156 +145,92 @@ const StockChart = ({ stockCode = '005930' }) => {
           default: apiId = 'KA10081';
         }
 
-        console.log('API 요청:', { apiId, requestData });
-
         const response = await fetch(`/api/stock/daily-chart/${stockCode}?apiId=${apiId}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestData)
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData)
         });
-        
-        console.log('API 응답 상태:', response.status, response.statusText);
-        
-        if (!response.ok) throw new Error('데이터를 불러오는데 실패했습니다.');
+        if (!response.ok) throw new Error('API 응답에 실패했습니다.');
         const data = await response.json();
         
-        console.log('API 응답 데이터:', data);
-        
-        if (!candlestickSeriesRef.current || !volumeSeriesRef.current) {
-          console.log('차트가 이미 제거되었습니다.');
-          return;
-        }
-        
-        // 차트 데이터 처리 로직
         let chartData;
         switch (chartType) {
-          case '월': chartData = data.stk_mth_pole_chart_qry; break;
-          case '일': chartData = data.stk_dt_pole_chart_qry; break;
-          case '주': chartData = data.stk_stk_pole_chart_qry; break;
-          case '년': chartData = data.stk_yr_pole_chart_qry; break;
-          case '1분': chartData = data.stk_min_pole_chart_qry || data.stk_stk_pole_chart_qry; break;
-          default: chartData = data.stk_dt_pole_chart_qry;
+            case '월': chartData = data.stk_mth_pole_chart_qry; break;
+            case '일': chartData = data.stk_dt_pole_chart_qry; break;
+            case '주': chartData = data.stk_stk_pole_chart_qry; break;
+            case '년': chartData = data.stk_yr_pole_chart_qry; break;
+            case '1분': chartData = data.stk_min_pole_chart_qry || data.stk_stk_pole_chart_qry; break;
+            default: chartData = data.stk_dt_pole_chart_qry;
         }
 
-        console.log('차트 데이터:', chartData);
-
         if (chartData && chartData.length > 0) {
-          const processedData = [];
-          for (const item of chartData) {
-            let dateStr = (chartType === '1분') ? item.cntr_tm : (item.dt || item.trd_dt);
-            if (!dateStr) continue;
-            
-            let timestamp;
-            try {
-              if (chartType === '년' && dateStr.length === 4) {
-                timestamp = new Date(parseInt(dateStr), 0, 1).getTime() / 1000;
-              } else if (chartType === '1분' && dateStr.length === 14) {
-                timestamp = new Date(
-                  parseInt(dateStr.slice(0, 4)),
-                  parseInt(dateStr.slice(4, 6)) - 1,
-                  parseInt(dateStr.slice(6, 8)),
-                  parseInt(dateStr.slice(8, 10)),
-                  parseInt(dateStr.slice(10, 12))
-                ).getTime() / 1000;
-              } else if (dateStr.length === 8) {
-                timestamp = new Date(
-                  parseInt(dateStr.slice(0, 4)),
-                  parseInt(dateStr.slice(4, 6)) - 1,
-                  parseInt(dateStr.slice(6, 8))
-                ).getTime() / 1000;
-              } else {
-                continue;
-              }
-            } catch (e) {
-              continue;
-            }
-            
-            if (isNaN(timestamp)) continue;
+            const processedData = chartData.map(item => {
+                let dateStr = (chartType === '1분') ? item.cntr_tm : (item.dt || item.trd_dt);
+                if (!dateStr) return null;
+                let timestamp;
+                try {
+                    if (chartType === '년' && dateStr.length === 4) {
+                        timestamp = new Date(parseInt(dateStr), 0, 1).getTime() / 1000;
+                    } else if (chartType === '1분' && dateStr.length === 14) {
+                        timestamp = new Date(parseInt(dateStr.slice(0, 4)), parseInt(dateStr.slice(4, 6)) - 1, parseInt(dateStr.slice(6, 8)), parseInt(dateStr.slice(8, 10)), parseInt(dateStr.slice(10, 12))).getTime() / 1000;
+                    } else if (dateStr.length === 8) {
+                        timestamp = new Date(parseInt(dateStr.slice(0, 4)), parseInt(dateStr.slice(4, 6)) - 1, parseInt(dateStr.slice(6, 8))).getTime() / 1000;
+                    } else { return null; }
+                } catch (e) { return null; }
+                if (isNaN(timestamp)) return null;
 
-            let close = parseFloat(item.cur_prc || item.clos_prc);
-            if (isNaN(close)) continue;
-            let open = parseFloat(item.open_pric || item.open_prc);
-            let high = parseFloat(item.high_pric || item.high_prc);
-            let low = parseFloat(item.low_pric || item.low_prc);
-            let volume = parseFloat(item.trde_qty || item.trd_qty) || 0;
-            
-            if (isNaN(open)) open = close;
-            if (isNaN(high)) high = Math.max(close, open);
-            if (isNaN(low)) low = Math.min(close, open);
+                let close = parseFloat(item.cur_prc || item.clos_prc);
+                if (isNaN(close)) return null;
+                
+                let open = parseFloat(item.open_pric || item.open_prc) || close;
+                let high = parseFloat(item.high_pric || item.high_prc) || Math.max(close, open);
+                let low = parseFloat(item.low_pric || item.low_prc) || Math.min(close, open);
+                let volume = parseFloat(item.trde_qty || item.trd_qty) || 0;
 
-            processedData.push({ time: timestamp, open, high, low, close, volume });
-          }
+                return { time: timestamp, open, high, low, close, volume };
+            }).filter(Boolean);
 
-          console.log('처리된 데이터:', processedData);
+            if(processedData.length === 0) throw new Error('유효한 차트 데이터가 없습니다.');
 
-          if (processedData.length > 0) {
             processedData.sort((a, b) => a.time - b.time);
+            
             const candlestickData = processedData.map(({ time, open, high, low, close }) => ({ time, open, high, low, close }));
-            const volumeData = processedData.map(({ time, volume, open, close }) => ({
-              time,
-              value: volume,
-              color: close >= open ? '#ff3333' : '#5050ff'
-            }));
-
-            console.log('차트에 설정할 데이터:', { candlestickData, volumeData });
-
-            try {
-              if (candlestickSeriesRef.current) {
-                candlestickSeriesRef.current.setData(candlestickData);
-                console.log('캔들스틱 데이터 설정 완료');
-              }
-              if (volumeSeriesRef.current) {
-                volumeSeriesRef.current.setData(volumeData);
-                console.log('거래량 데이터 설정 완료');
-              }
-            } catch (e) {
-              console.log('차트 데이터 설정 중 오류:', e);
-              return;
-            }
+            const volumeData = processedData.map(({ time, volume, open, close }) => ({ time, value: volume, color: close >= open ? 'rgba(216, 64, 64, 0.7)' : 'rgba(59, 100, 216, 0.7)' }));
+            
+            candlestickSeriesRef.current.setData(candlestickData);
+            volumeSeriesRef.current.setData(volumeData);
+            
+            chartRef.current.priceChart.timeScale().fitContent();
             
             const latestData = processedData[processedData.length - 1];
             setStockInfo({
-              name: stockCode, // 종목 코드를 이름으로 사용
-              price: latestData.close,
-              changeAmount: latestData.close - latestData.open,
-              changeRate: ((latestData.close - latestData.open) / latestData.open * 100).toFixed(2),
-              changeType: latestData.close >= latestData.open ? 'up' : 'down'
+                name: stockCode, price: latestData.close, changeAmount: latestData.close - latestData.open,
+                changeRate: ((latestData.close - latestData.open) / latestData.open * 100).toFixed(2),
+                changeType: latestData.close >= latestData.open ? 'up' : 'down'
             });
-          }
-        } else {
-          console.log('차트 데이터가 없습니다.');
-        }
-
+        } else { throw new Error('차트 데이터가 없습니다.'); }
       } catch (err) {
-        console.error('차트 데이터 로딩 중 오류:', err);
-        setError('차트 데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+        setError(err.message);
+        setStockInfo(null);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchChartData();
+    fetchData();
   }, [stockCode, chartType]);
 
   return (
-    <div className={styles['stock-chart-layout']}>
-      <ChartHeader stockInfo={stockInfo} isLoading={!stockInfo && !error} />
+    <div className={`${styles.stock_chart_layout} ${styles.enter}`}>
+      <ChartHeader stockInfo={stockInfo} isLoading={isLoading && !error} />
       <MainTabs />
       <ChartControls chartType={chartType} onChartTypeChange={setChartType} />
-      
-      <div className={styles['chart-area-container']}>
-        {error ? (
-          <div className={styles.error}>{error}</div>
-        ) : (
-          <>
-            <div 
-              ref={priceChartContainerRef} 
-              className={styles['price-chart-container']} 
-            />
-            <div 
-              ref={volumeChartContainerRef} 
-              className={styles['volume-chart-container']}
-            />
-          </>
-        )}
+      <div className={styles.chart_area_container}>
+        {isLoading && <div className={styles.loader_wrapper}><ChartSkeleton /></div>}
+        {error && !isLoading && <div className={styles.error}>{error}</div>}
+        
+        <div className={`${styles.chart_content_wrapper} ${!isLoading && !error ? styles.visible : ''}`}>
+          <div ref={priceChartContainerRef} className={styles.price_chart_container} />
+          <div ref={volumeChartContainerRef} className={styles.volume_chart_container} />
+        </div>
       </div>
     </div>
   );

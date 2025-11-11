@@ -6,7 +6,6 @@ import { useTopStocks } from '../hooks/useTopStocks';
 
 // 레이아웃 컴포넌트들
 import StockChart from '../Components/layout/StockChart/StockChart.jsx'
-import Chat from '../Components/layout/Chat/Chat.jsx';
 import Rank from '../Components/layout/Rank/Rank.jsx';
 import Sidebar from '../Components/layout/Sidebar/Sidebar.jsx';
 import Topbar from '../Components/layout/Topbar/Topbar.jsx';
@@ -18,7 +17,6 @@ import styles from '../styles/main.module.css';
 const Home = () => {
   //주식 데이터 로직 
   const { topStocks, loading, error } = useTopStocks();
-  
   const [selectedStock, setSelectedStock] = useState(null);
 
   const handleStockSelect = (stockCode) => {
@@ -29,7 +27,8 @@ const Home = () => {
     if (selectedStock) {
       return (
         <>
-          <button className={styles.backButton} onClick={() => setSelectedStock(null)}>
+          {/* [추가 예정] 애니메이션 효과*/}
+          <button className={`${styles.backButton} ${styles.fade_in}`} onClick={() => setSelectedStock(null)}>
             ← 랭킹으로 돌아가기
           </button>
           <StockChart stockCode={selectedStock} />
@@ -42,26 +41,26 @@ const Home = () => {
   };
 
   return (
-
-    // 페이지 전체 레이아웃
-    <div className={styles.homeContainer}>
-      {/*고정 컴포넌트 */}
-      <Sidebar />
-      <Topbar />
+    <div className={styles.homeContainer}> {/*각 요소들 위치를 위한 그리드 설정 */}
+      <div className={styles.sidebar_wrapper}>
+        <Sidebar />
+      </div>
+      <div className={styles.topbar_wrapper}>
+        <Topbar />
+      </div>
+      
       {/* 메인 콘텐츠 */}
       <main className={styles.main_content}>
         <section className={styles.chart_section}>
           {renderChartSection()}
         </section>
-        <div className={styles.divider}></div>
-        {/* 채팅 영역 */}
-        <section className={styles.chat_section}>
-          <Chat />
-        </section>
-        {/* AI 결과 영역 */}
-        <section className={styles.ai_result_section}>
-          <AiResult />
-        </section>
+        
+        {/* 오른쪽 내용 : AI 분석결과 */}
+        <div className={styles.right_panel_wrapper}>
+          <section className={styles.ai_result_section}>
+            <AiResult />
+          </section>
+        </div>
       </main>
     </div>
   );

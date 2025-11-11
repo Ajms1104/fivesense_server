@@ -66,7 +66,7 @@ public List<Map<String, Object>> getLatestNews(@RequestParam(value = "page", def
             System.out.println("데이터베이스 연결 성공!");
 
             PreparedStatement stmt = conn.prepareStatement(
-                "SELECT title, link ,label FROM news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
+                "SELECT title, link, label FROM news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
             System.out.println("SQL 쿼리 실행 중...");
 
             ResultSet rs = stmt.executeQuery();

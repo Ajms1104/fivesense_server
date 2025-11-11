@@ -1,120 +1,109 @@
-// pages/BookmarkPage.jsx
-// 즐겨찾기
+// pages/BookmarkPage/Bookmark.jsx 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import style from './bookmark.module.css';
 
-// 컴포넌트
 import Sidebar from '../../Components/layout/Sidebar/Sidebar.jsx';
 import Topbar from '../../Components/layout/Topbar/Topbar.jsx';
 
-import style from './bookmark.module.css';
+// 탭 메뉴 컴포넌트
+const TabMenu = ({ activeTab, setActiveTab }) => (
+    <aside className={style.tab_menu}>
+        <button 
+            className={activeTab === 'stock' ? style.active : ''}
+            onClick={() => setActiveTab('stock')}
+        >
+            📈 주식
+        </button>
+        <button 
+            className={activeTab === 'search' ? style.active : ''}
+            onClick={() => setActiveTab('search')}
+        >
+            🕜 검색 기록
+        </button>
+    </aside>
+);
 
+// 북마크 리스트 컴포넌트
+const BookmarkList = ({ items, onDelete, type }) => (
+    <ul className={style.bookmark_list}>
+        {items.length > 0 ? (
+            items.map(item => (
+                <li key={item.id} className={style.bookmark_item}>
+                    <span className={style.favorite_icon}>⭐</span>
+                    <span className={style.item_name}>
+                        {type === 'stock' ? item.name : item.query}
+                    </span>
+                    <button className={style.delete_btn} onClick={() => onDelete(item.id)}>
+                        ✕
+                    </button>
+                </li>
+            ))
+        ) : (
+            <div className={style.empty_message}>
+                {type === 'stock' ? '즐겨찾기한 주식이 없습니다.' : '검색 기록이 없습니다.'}
+            </div>
+        )}
+    </ul>
+);
+
+// 메인 북마크 페이지 컴포넌트
 const BookmarkPage = () => {
-    // --- 기존 로직 ---
-    const navigate = useNavigate();
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [showUserPopup, setShowUserPopup] = useState(false);
-    
-    const toggleSidebar = () => setSidebarOpen(prev => !prev);
-    const toggleUserPopup = () => setShowUserPopup(prev => !prev);
-
-    // --- 데이터 및 상태 관리 로직 ---
     const [activeTab, setActiveTab] = useState('stock');
 
     const [stockBookmarks, setStockBookmarks] = useState([
-        { id: 1, name: '즐겨찾기 한 주식 1' }, // isFavorite 속성 제거
-        { id: 2, name: '즐겨찾기 한 주식 2' },
-        { id: 3, name: '즐겨찾기 한 주식 3' },
+        { id: 1, name: '삼성전자' },
+        { id: 2, name: 'SK하이닉스' },
+        { id: 3, name: 'LG에너지솔루션' },
     ]);
     
     const [searchHistory, setSearchHistory] = useState([
-        { id: 1, query: '삼성전자 재무재표 분석' },
-        { id: 2, query: '테슬라 최신 뉴스 요약' },
-        { id: 3, query: '카카오 전망' },
+        { id: 1, query: '배당주 순위' },
+        { id: 2, query: 'PER이 낮은 반도체 주식' },
+        { id: 3, query: '2차전지 관련주 전망' },
     ]);
 
-    // ⭐ 1. 주식 즐겨찾기 삭제 함수 추가 (기존 토글 함수는 제거)
     const handleDeleteStockBookmark = (stockId) => {
-        setStockBookmarks(prevStocks => 
-            prevStocks.filter(stock => stock.id !== stockId)
-        );
+        setStockBookmarks(prev => prev.filter(stock => stock.id !== stockId));
     };
 
-    // 검색 기록 삭제 함수
     const handleDeleteSearchHistory = (historyId) => {
-        setSearchHistory(prevHistory => 
-            prevHistory.filter(item => item.id !== historyId)
-        );
+        setSearchHistory(prev => prev.filter(item => item.id !== historyId));
     };
     
     return (
-        <section className={style['bookmark-container']}>
-            <Sidebar />
-            <Topbar />
-    
-            <aside className={style['b-main-bar']}>
-                <div className={style['bookmark-top']}>
-                    <h3 className={style.bookmark_name}>즐겨찾기</h3>
-                    <p className={style.line_6}></p>
-                    
-                    <div className={style['bookmark-side']}>
-                        <button 
-                            className={`${style.mark_chart} ${activeTab === 'stock' ? style.active : ''}`}
-                            onClick={() => setActiveTab('stock')}
-                        >
-                            📈 주식
-                        </button>
-                        <button 
-                            className={`${style.mark_search} ${activeTab === 'search' ? style.active : ''}`}
-                            onClick={() => setActiveTab('search')}
-                        >
-                            🕜 검색 기록
-                        </button>
-                        <p className={style.line_7}></p>
-                    </div>
-                    
-                    <div className={style['bookmark-center']}>
-                        {/* '주식' 탭 렌더링 수정 */}
-                        {activeTab === 'stock' && (
-                            <ul className={style['bookmark-list']}>
-                                {stockBookmarks.map(item => (
-                                    <li key={item.id} className={style['bookmark-item']}>
-                                        {/* ⭐ 2. 별 아이콘을 고정된 span으로 변경 */}
-                                        <span className={style['favorite-icon']}>⭐</span>
-                                        <span className={style['item-name']}>{item.name}</span>
-                                        {/* ⭐ 3. 주식 목록에 삭제 버튼 추가 */}
-                                        <button 
-                                            className={style['delete-btn']}
-                                            onClick={() => handleDeleteStockBookmark(item.id)}
-                                        >
-                                            ✕
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
+        // 
+        <div className={style.page_grid_container}>
+            <div className={style.sidebar_wrapper}>
+                <Sidebar />
+            </div>
+            <div className={style.topbar_wrapper}>
+                <Topbar />
+            </div>
+            
+            <main className={style.main_content}>
+                <header className={style.header}>
+                    <h1>즐겨찾기</h1>
+                </header>
+                <div className={style.content_wrapper}>
+                    <TabMenu activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <section className={style.content_area}>
+                        {activeTab === 'stock' ? (
+                            <BookmarkList 
+                                items={stockBookmarks} 
+                                onDelete={handleDeleteStockBookmark} 
+                                type="stock" 
+                            />
+                        ) : (
+                            <BookmarkList 
+                                items={searchHistory} 
+                                onDelete={handleDeleteSearchHistory} 
+                                type="search" 
+                            />
                         )}
-
-                        {/* '검색 기록' 탭 렌더링 (기존과 동일) */}
-                        {activeTab === 'search' && (
-                            <ul className={style['bookmark-list']}>
-                                {searchHistory.map(item => (
-                                    <li key={item.id} className={style['bookmark-item']}>
-                                        <span className={style['favorite-icon']}>⭐</span>
-                                        <span className={style['item-name']}>{item.query}</span>
-                                        <button 
-                                            className={style['delete-btn']}
-                                            onClick={() => handleDeleteSearchHistory(item.id)}
-                                        >
-                                            ✕
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+                    </section>
                 </div>
-            </aside>
-        </section>
+            </main>
+        </div>
     );
 };
 

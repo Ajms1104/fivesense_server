@@ -1,171 +1,197 @@
-/* rank.module.css (높이 추가 축소 최종 버전) */
+/* rank.module.css */
 
-.rank-component-wrapper {
-  font-family: 'Pretendard';
-}
-
-.tab-container {
+.rank_container {
+  font-family: 'Pretendard', sans-serif;
   display: flex;
-  margin-left: 10px;
-  position: relative;
-  left: 265px; 
-}
-
-.tab-button {
-  height: 30px;
-  width: 130px;
-  padding: 5px 12px; /* 세로 padding 감소 */
-  border: 1px solid #e0e0e0;
-  border-bottom: none;
-  border-radius: 7px 7px 0 0;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  color: #888;
-  margin-right: 4px;
-  position: relative;
-  bottom: -1px; 
-}
-
-.tab-button.active {
-  background-color: #ffc107;
-  border-color:#ffc107;
-  color: #333;
-  z-index: 2; 
-}
-
-.stock-ranking-container {
+  flex-direction: column;
   width: 100%;
-  max-width: 520px;
-  margin: 0 auto;
-  border-radius: 5px; 
-  padding: 8px 14px; /* 세로 padding 감소 */
+}
+
+/* --- 탭 스타일 --- */
+.tab_container {
+  display: flex;
+  position: relative; /* 인디케이터의 기준점 */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab_button {
+  padding: 10px 16px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  transition: color 0.3s;
+}
+
+.tab_button.active {
+  color: #24AFCF; /* 활성화 색상 변경 */
+  font-weight: 700;
+}
+
+.active_indicator {
+  position: absolute;
+  bottom: -1px; /* 테두리 위에 위치 */
+  height: 2px;
+  background-color: #24AFCF;
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+/* --- 콘텐츠 컨테이너 (테이블, 페이지네이션 포함) --- */
+.content_container {
+  padding: 20px;
   background-color: #ffffff;
-  border: 1px solid #e0e0e0; 
-  border-top-left-radius: 0; 
-  position: relative;
-  z-index: 1;
-  min-height: 350px; /* min-height 감소 */
+  border-radius: 5px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
 }
 
-/*------------구분선------------*/
 .header {
   display: flex;
-  align-items: center;
-  margin-bottom: 8px; /* margin-bottom 감소 */
+  align-items: baseline;
+  margin-bottom: 16px;
 }
+
 .title {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 700;
+  margin: 0;
 }
-.update-time {
-  font-size: 11px;
+
+.update_time {
+  font-size: 12px;
   color: #888;
-  margin-left: 8px;
+  margin-left: 12px;
 }
 
-/*------------구분선------------*/
-.stocks-table {
+/* --- 테이블 스타일 --- */
+.stocks_table {
   width: 100%;
-  border-collapse: collapse; 
-  table-layout: fixed; 
-}
-.stocks-table th, .stocks-table td {
-  position: relative;
-  top:-5px;
-  padding: 1px 1px; /* 세로 padding 감소 */
-  border-bottom: 1px solid #f0f0f0;
-  vertical-align: middle; 
-}
-.stocks-table th {
-  text-align: right; 
-  font-weight: 400;
-  font-size: 10px;
-  color: #555;
-  background-color: #f8f9fa;
-  padding-bottom: 4px; /* padding-bottom 감소 */
-}
-.stocks-table .th-rank { width: 60%; text-align: left; }
-.stocks-table .th-price { width: 22%; }
-.stocks-table .th-change { width: 18%; }
-.stocks-table tbody tr:hover {
-  cursor: pointer;
+  border-collapse: collapse;
 }
 
-/*------------구분선------------*/
-.td-name-cell {
+.stocks_table th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: #555;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.stocks_table th:nth-child(2),
+.stocks_table th:nth-child(3) {
   text-align: right;
+}
+
+
+.stock_row {
+  cursor: pointer;
+  transition: transform 0.2s ease-out, background-color 0.2s ease-out; 
+}
+
+.stock_row:hover {
+  background-color: #f8f9fa; /* 마우스를 올렸을 때 배경색 변경 */
+  transform: translateY(-2px); /* 살짝 위로 떠오르는 효과 */
+}
+
+.stock_row.selected {
+  background-color: #eafcff; /* 선택되었을 때 배경색 */
+}
+
+/* 테이블 셀(Cell) 스타일 */
+.stock_row td {
+  padding: 12px 4px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.name_cell {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
-.td-price, .td-change {
-  text-align: right;
-  font-weight: 400;
-  font-size: 11px;
-}
-.favorite-btn {
-  cursor: pointer;
+
+.rank_number {
   font-size: 14px;
-  color: #ccc;
-  position: relative;
-  left: -30px;
+  font-weight: 600;
+  color: #888;
+  min-width: 20px;
+  text-align: center;
 }
-.favorite-btn:hover { color: #f5c943; }
-.stock-name {
-  font-weight: 400;
-  font-size: 11px;
+
+.favorite_btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ccc;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.favorite_btn:hover {
+  color: #f5c943;
+  transform: scale(1.2);
+}
+
+.stock_name {
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: right;
 }
-.rank {
-  font-size: 14px;
-  font-weight: 400;
-  min-width: 10px;
-  text-align: center;
-}
-.up { color: #ff3333; }
-.down { color: #5050ff; }
 
-/*------------구분선------------*/
-.pagination-controls {
+.price_cell,
+.change_cell {
+  text-align: right;
+  font-weight: 500;
+}
+
+.up { color: #d84040; }
+.down { color: #3b64d8; }
+
+/* --- 페이지네이션 --- */
+.pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: auto;
-  padding-top: 8px; /* padding-top 감소 */
-  gap: 15px;
+  margin-top: auto; 
+  padding-top: 16px;
+  gap: 16px;
+  font-size: 14px;
+  font-weight: 600;
 }
-.pagination-controls button {
-  width: 100px;
+
+.pagination button {
+  width: 80px;
+  padding: 6px 12px;
   background: #f0f0f0;
   border: none;
   border-radius: 5px;
-  padding: 2px 6px; /* 세로 padding 감소 */
   cursor: pointer;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
+  transition: background-color 0.2s;
 }
-.pagination-controls button:disabled {
+
+.pagination button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.pagination button:disabled {
   background: #f8f8f8;
   color: #ccc;
   cursor: not-allowed;
 }
-.page-info {
-  font-weight: 600;
-  font-size: 11px;
-}
 
-/*------------구분선------------*/
-.no-data {
-  min-width: 500px;
+/* --- 데이터 없음 --- */
+.no_data {
+  text-align: center;
   color: #888;
-  display: flex;
-  justify-content:center;
-  align-items: center;
-  flex-grow: 1;
+  padding: 40px;
 }

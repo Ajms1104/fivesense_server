@@ -1,67 +1,53 @@
+// src/Components/layout/Topbar/Topbar.jsx 
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../contexts/AuthContext.jsx';
-
+import { NavLink, useNavigate } from 'react-router-dom'; 
+import { useAuth } from '../../../contexts/AuthContext'; 
 import style from './topbar.module.css';
-import UserIcon from '../../../assets/user.svg';
-import popup from '../../../assets/popupbtn.svg';
-import login from '../../../assets/login.svg';
-import logout_btn from '../../../assets/logout.svg';
+import userProfileIcon from '../../../assets/user.svg';
 
-function Topbar() {
-  const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth(); 
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [hideTimer, setHideTimer] = useState(null);
+// 모바일 전용 내비게이션 컴포넌트
+const MobileNav = () => (
+    <nav className={style.mobile_nav}>
+        <NavLink to="/" end className={({ isActive }) => isActive ? `${style.mobile_nav_link} ${style.active}` : style.mobile_nav_link}>
+            실시간 랭킹
+        </NavLink>
+        <NavLink to="/aichat" className={({ isActive }) => isActive ? `${style.mobile_nav_link} ${style.active}` : style.mobile_nav_link}>
+            AI 채팅
+        </NavLink>
+    </nav>
+);
 
-  const handleLogin = () => { navigate('/login'); };
-  const handleLogout = () => {
-    logout();
-    setIsPopupVisible(false);
-    navigate('/login');
-  };
 
-  const handleMouseEnter = () => {
-    if (hideTimer) {
-      clearTimeout(hideTimer);
-    }
-    setIsPopupVisible(true);
-  };
+//  Topbar 컴포넌트 
+const Topbar = () => {
+    const [showUserPopup, setShowUserPopup] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate(); 
 
-  const handleMouseLeave = () => {
-    const timer = setTimeout(() => {
-      setIsPopupVisible(false);
-    }, 200);
-    setHideTimer(timer);
-  };
+    const toggleUserPopup = () => setShowUserPopup(prev => !prev);
 
-  return (
-    <aside className={style['top-bar']}>
-      <div className={style['user-bar']}>
-        <button className={style.user_btn}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}>
-          <img src={UserIcon} alt="user" className={style.user}/>
-          {isPopupVisible && (
-            <div className={style.popupbar}>
-              <img src={popup} className={style.popup_btn}/>
-              {isLoggedIn ? (
-                <div onClick={handleLogout} className={style.popup_txt}>
-                  <img src={logout_btn} className={style.loginout_btn}/>
-                  로그아웃
-                </div>
-               ) : (
-                <div onClick={handleLogin} className={style.popup_txt}>
-                  <img src={login} className={style.loginout_btn} />
-                  로그인
-                </div>
-              )}
+    const handleLogout = () => {
+        logout();
+        navigate('/login'); // 로그아웃 후 로그인 페이지로 이동
+    };
+
+    return (
+        <header className={style.topbar_container}>
+            <div className={style.topbar_left}></div>
+            <MobileNav />
+            <div className={style.topbar_right}>
+                <button type="button" onClick={toggleUserPopup} className={style.user_profile_button}>
+                    <img src={userProfileIcon} alt="User Profile" />
+                </button>
+                {showUserPopup && (
+                    <div className={style.user_popup}>
+                        <button onClick={handleLogout}>로그아웃</button>
+                    </div>
+                )}
             </div>
-          )}
-        </button>
-      </div>
-    </aside>
-  );
-}
+        </header>
+    );
+};
 
 export default Topbar;

@@ -1,98 +1,102 @@
-// components/Login.jsx
-// 로그인
+// pages/LoginPage/Login.jsx (수정)
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext.jsx';
-
 import style from './login.module.css';
-
-/* 이미지 모음 */
 import teamlogo from '../../assets/teamlogo.png';
 
+// [시니어 멘토링] 헤더 컴포넌트로 분리하여 구조를 명확하게 합니다.
+const LoginHeader = () => (
+    <header className={style.header}>
+        <img src={teamlogo} alt="팀 로고" className={style.logo_image} />
+        <h1 className={style.logo_text}>FIVE_SENSE</h1>
+    </header>
+);
+
+// --- 👑 메인 로그인 페이지 컴포넌트 ---
 const Login = () => {
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const [accountid, setAccountid] = useState('');
-  const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    const { login } = useAuth(); // AuthContext에서 login 함수 가져오기
+    const [accountid, setAccountid] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(''); // [시니어 멘토링] 에러 상태 추가
+    const [isLoading, setIsLoading] = useState(false); // [시니어 멘토링] 로딩 상태 추가
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('로그인 시도:', accountid, password);
-    
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          accountid: accountid,
-          password: password
-        })
-      });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
 
-      const data = await response.json();
-      
-      if (data.success) {
-        console.log('로그인 성공:', data.message);
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('user', JSON.stringify(data.user));
-        login(); // AuthContext의 login 함수 호출
-        navigate('/');
-      } else {
-        console.log('로그인 실패:', data.message);
-        alert(data.message || '로그인에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('로그인 요청 중 오류:', error);
-      alert('로그인 처리 중 오류가 발생했습니다.');
-    }
-  };
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accountid, password })
+            });
+            const data = await response.json();
 
-  const handleHome = () => {
-    navigate('/');
-  };
+            if (data.success) {
+                // [시니어 멘토링] 로그인 성공 시 AuthContext를 통해 상태 업데이트 및 페이지 이동
+                login(data.user); // user 정보를 context에 저장
+                navigate('/');
+            } else {
+                setError(data.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
+            }
+        } catch (err) {
+            setError('서버와 통신 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-  const handleJoin = () => {
-    navigate('/join');
-  };
+    return (
+        <div className={style.page_container}>
+            <div className={style.login_box}>
+                <LoginHeader />
+                <form className={style.login_form} onSubmit={handleSubmit}>
+                    <div className={style.form_group}>
+                        <label htmlFor="accountid">아이디</label>
+                        <input
+                            type="text"
+                            id="accountid"
+                            value={accountid}
+                            onChange={e => setAccountid(e.target.value)}
+                            placeholder="아이디를 입력하세요"
+                            required
+                        />
+                    </div>
+                    <div className={style.form_group}>
+                        <label htmlFor="password">비밀번호</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            placeholder="비밀번호를 입력하세요"
+                            required
+                        />
+                    </div>
+                    
+                    {/* [시니어 멘토링] 에러 메시지를 UI에 직접 표시 */}
+                    {error && <p className={style.error_message}>{error}</p>}
 
-  return (
-    <div className={style['login-container']}>
-      <form className={style['login-input-form']} onSubmit={handleSubmit}>
-        <div className={style.title}>
-          <img src={teamlogo} alt="팀 로고" className={style['login_logo_png']} />
-          <h1 className={style['login-logo-txt']}>FIVE_SENSE</h1>
+                    <div className={style.button_group}>
+                        <button className={style.login_btn} type="submit" disabled={isLoading}>
+                            {isLoading ? '로그인 중...' : '로그인'}
+                        </button>
+                        <button 
+                            className={style.join_btn} 
+                            type="button" 
+                            onClick={() => navigate('/join')}
+                            disabled={isLoading}
+                        >
+                            회원가입
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        
-        <div className={style['form-group']}>
-          <label htmlFor="accountid">아이디</label>
-          <input
-            type="text"
-            id="accountid"
-            name="accountid"
-            required
-            value={accountid}
-            onChange={e => setAccountid(e.target.value)}
-          />
-        </div>
-
-        <div className={style['form-group']}>
-          <label htmlFor="password">비밀번호</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-        </div>
-        <button className={style.login_btn} type="submit">로그인</button>
-        <button className={style.join_btn} type="button" onClick={handleJoin}> 회원가입 </button>
-      </form>
-    </div>
-  );
+    );
 };
 
 export default Login;

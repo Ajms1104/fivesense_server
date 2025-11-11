@@ -1,104 +1,131 @@
-/* src/styles/login.css */
+/* pages/LoginPage/login.module.css (수정) */
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
-
-
-/* 전체 컨테이너: 화면 중앙 정렬 */
-.login-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* 전체 페이지 레이아웃 */
+.page_container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
 }
 
-/*로고 영역*/
-.login_logo_png{
-  width: 70px;
-  height: 50px;
-  flex-shrink: 0;
-  aspect-ratio: 1/1;
-  position: relative;
-  left:65px;
+/* 로그인 박스 */
+.login_box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 420px;
+    animation: fadeIn 0.5s ease-out; 
 }
 
-.login-logo-txt{ /*five_sense*/
-  width: 20px;
-  height: 20px;
-  color: #24AFCF;
-  font-family: 'Pretendard';
-  font-size: 28px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-  position: relative;
-  left: 140px;
-  top: -60px;
-}
-/*------------------------구분선------------------------*/
-
-.login-input-form { /* 내용 담는? 상자 */
-  background: #ffffff;
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  height: 400px;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* 입력 그룹 */
-.form-group {
-  margin-bottom: 20px;
+/* 헤더 (로고) */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    gap: 12px;
+}
+.logo_image {
+    width: 70px;
+    height: 50px;
+    position: relative;
+    right: 10px;
+}
+.logo_text {
+    color: #24AFCF;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    right: 10px;
 }
 
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #333;
+/*  로그인 폼  */
+.login_form {
+    display: flex;
+    flex-direction: column;
+}
+.form_group {
+    margin-bottom: 20px;
+}
+.form_group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+}
+.form_group input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+.form_group input:focus {
+    outline: none;
+    border-color: #24AFCF;
 }
 
-input[type="text"],
-input[type="password"] {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  font-size: 16px;
-}
-
-/* 버튼 */
-.login_btn[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  background-color: #24AFCF;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  position: relative;
-  top: 10px;
-}
-
-.join_btn{
-  width: 100%;
-  padding: 12px;
-  background-color: #F5C943;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  position: relative;
-  top:23px;
-}
-
-.register-link {
-  margin-top: 15px;
-  text-align: center;
+/* 에러 메시지 스타일 */
+.error_message {
+    color: #d84040;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 16px;
 }
 
 
+/* 버튼 그룹 */
+.button_group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 버튼 사이 간격 */
+    margin-top: 12px;
+}
+.button_group button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.button_group button:active {
+    transform: scale(0.98); 
+}
+.button_group button:disabled {
+    background-color: #dcdcdc;
+    cursor: not-allowed;
+}
+
+.login_btn {
+    background-color: #24AFCF;
+    color: white;
+}
+.login_btn:hover:not(:disabled) {
+    background-color: #1a8a9f;
+}
+.join_btn {
+    background-color: #ffc107;
+    color: #333;
+}
+.join_btn:hover:not(:disabled) {
+    background-color: #e0a800;
+}

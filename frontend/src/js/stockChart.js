@@ -1,5 +1,6 @@
 import { createChart, CrosshairMode } from 'lightweight-charts';
 
+/* 더이상 사용하지 않음 */
 class StockChart {
     constructor() {
         this.chartContainer = document.getElementById('chartContainer');
