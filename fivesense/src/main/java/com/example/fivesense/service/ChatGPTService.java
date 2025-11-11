@@ -63,18 +63,17 @@ public class ChatGPTService {
             // 시스템 메시지 추가
             messages.add(new com.theokanning.openai.completion.chat.ChatMessage(
                 "system", 
-                "당신은 주식 투자 전문가입니다. 사용자의 질문에 대해 전문적이고 정확한 답변을 제공해주세요. " +
-                "주식 데이터나 뉴스 데이터가 필요한 경우, 제공된 함수를 사용하여 최신 정보를 조회한 후 답변해주세요."
+                "당신은 주식 투자 전문 AI 어시스턴트입니다. 다음 규칙을 반드시 따르세요:\n" +
+                "1. 사용자가 특정 주식의 주가, 차트, 시세, 가격 등을 물어보면 ALWAYS get_stock_chart 함수를 호출하세요.\n" +
+                "2. 거래량 상위 종목을 물어보면 get_top_volume_stocks 함수를 호출하세요.\n" +
+                "3. 뉴스나 최신 소식을 물어보면 get_latest_news 또는 search_news 함수를 호출하세요.\n" +
+                "4. 함수를 호출할 수 있는 상황에서는 절대 '정보를 제공할 수 없습니다'라고 답하지 마세요.\n" +
+                "5. 함수 호출 결과를 바탕으로 친절하고 전문적인 답변을 제공하세요."
             ));
             System.out.println("시스템 메시지 추가 완료");
             
-            // 이전 대화 내역 추가 (최근 10개 메시지)
-            List<ChatList> previousMessages = chatMessageRepository.findRecentMessagesByRoomId(roomId, 10);
-            System.out.println("이전 대화 내역 개수: " + previousMessages.size());
-            for (ChatList msg : previousMessages) {
-                String role = "USER".equals(msg.getType()) ? "user" : "assistant";
-                messages.add(new com.theokanning.openai.completion.chat.ChatMessage(role, msg.getContent()));
-            }
+            // 이전 대화 내역 제거 - 토큰 절약 및 컨텍스트 초과 방지
+            // 매 질문을 독립적으로 처리 (대화 연속성 없음)
             
             // 현재 사용자 메시지 추가
             messages.add(new com.theokanning.openai.completion.chat.ChatMessage("user", userMessage));
@@ -88,8 +87,8 @@ public class ChatGPTService {
                     .messages(messages)
                     .functions(functions)
                     .functionCall(ChatCompletionRequest.ChatCompletionRequestFunctionCall.of("auto"))
-                    .maxTokens(1000)
-                    .temperature(0.7)
+                    .maxTokens(1500)  // 응답 길이 제한 (너무 크면 비용 증가 및 속도 저하)
+                    .temperature(0.3)  // 낮은 값으로 함수 호출을 더 일관되게 (0.7→0.3)
                     .build();
             System.out.println("ChatCompletionRequest 생성 완료");
 
@@ -178,25 +177,64 @@ public class ChatGPTService {
         // 주식 차트 조회 함수
         ChatFunction getStockChartFunction = ChatFunction.builder()
                 .name("get_stock_chart")
-                .description("주식 차트 데이터를 조회합니다. 특정 주식의 일봉, 분봉 등의 차트 데이터를 가져올 수 있습니다.")
+                .description(
+                    "주식의 현재 주가, 실시간 시세, 차트 데이터를 조회합니다. " +
+                    "사용자가 다음을 물어볼 때 ALWAYS 이 함수를 사용하세요:\n" +
+                    "- '삼성전자 주가', '현재 주가', '지금 주가'\n" +
+                    "- '주식 시세', '실시간 가격'\n" +
+                    "- '차트 보여줘', '주가 그래프'\n" +
+                    "파라미터:\n" +
+                    "1) stock_code (필수, string): 주식 종목 코드 6자리 숫자.\n" +
+                    "   주요 종목 예시:\n" +
+                    "   - 삼성전자=005930, SK하이닉스=000660\n" +
+                    "   - 카카오=035720, NAVER=035420\n" +
+                    "   - 현대차=005380, LG에너지솔루션=373220\n" +
+                    "   - 삼성바이오로직스=207940, 셀트리온=068270\n" +
+                    "2) base_date (선택, string): 조회 기준일 yyyyMMdd 형식. 생략 시 오늘 날짜\n" +
+                    "3) api_id (선택, string): API ID. 기본값 KA10081"
+                )
+                .executor(StockChartRequest.class, request -> {
+                    // 이 부분은 실제로 실행되지 않고, 타입 정의용
+                    return null;
+                })
                 .build();
         
         // 거래량 상위 종목 조회 함수
         ChatFunction getTopVolumeStocksFunction = ChatFunction.builder()
                 .name("get_top_volume_stocks")
-                .description("거래량 상위 종목을 조회합니다. 당일 거래량이 많은 주식들을 확인할 수 있습니다.")
+                .description(
+                    "거래량 상위 종목을 조회합니다. " +
+                    "당일 거래량이 많은 주식들의 목록을 확인할 수 있습니다. " +
+                    "파라미터가 필요 없습니다."
+                )
                 .build();
         
         // 최신 뉴스 조회 함수
         ChatFunction getLatestNewsFunction = ChatFunction.builder()
                 .name("get_latest_news")
-                .description("최신 뉴스를 조회합니다. 주식 관련 최신 뉴스와 시장 동향을 확인할 수 있습니다.")
+                .description(
+                    "최신 뉴스를 조회합니다. " +
+                    "파라미터: " +
+                    "1) page (선택, integer): 조회할 페이지 번호. 기본값 1"
+                )
+                .executor(NewsPageRequest.class, request -> {
+                    return null;
+                })
                 .build();
         
         // 키워드 뉴스 검색 함수
         ChatFunction searchNewsFunction = ChatFunction.builder()
                 .name("search_news")
-                .description("특정 키워드로 뉴스를 검색합니다. 특정 종목이나 회사에 대한 뉴스를 찾을 수 있습니다.")
+                .description(
+                    "특정 키워드로 뉴스를 검색합니다. " +
+                    "파라미터: " +
+                    "1) keyword (필수, string): 검색할 키워드. 회사명, 종목명, 산업 분야 등 " +
+                    "   예: '삼성전자', '반도체', '전기차' 등 " +
+                    "2) page (선택, integer): 조회할 페이지 번호. 기본값 1"
+                )
+                .executor(NewsSearchRequest.class, request -> {
+                    return null;
+                })
                 .build();
         
         functions.add(getStockChartFunction);
@@ -205,6 +243,22 @@ public class ChatGPTService {
         functions.add(searchNewsFunction);
         
         return functions;
+    }
+    
+    // Function calling을 위한 Request 클래스들
+    public static class StockChartRequest {
+        public String stock_code;
+        public String base_date;
+        public String api_id;
+    }
+    
+    public static class NewsPageRequest {
+        public Integer page;
+    }
+    
+    public static class NewsSearchRequest {
+        public String keyword;
+        public Integer page;
     }
     
     /**
@@ -226,8 +280,8 @@ public class ChatGPTService {
             ChatCompletionRequest followUpRequest = ChatCompletionRequest.builder()
                     .model("gpt-3.5-turbo")
                     .messages(messages)
-                    .maxTokens(1000)
-                    .temperature(0.7)
+                    .maxTokens(1200)  // Function call 결과를 포함한 응답 생성
+                    .temperature(0.5)  // 약간 낮은 값으로 더 정확한 답변 (0.7→0.5)
                     .build();
             
             System.out.println("Function call 후 최종 응답 생성 중...");
@@ -262,25 +316,25 @@ public class ChatGPTService {
                     
                     System.out.println("주식 차트 조회: " + stockCode + ", " + baseDate + ", " + apiId);
                     Map<String, Object> chartResult = kiwoomApiService.getDailyStockChart(stockCode, baseDate, apiId);
-                    return "주식 차트 데이터: " + chartResult.toString();
+                    return summarizeChartData(chartResult);
                     
                 case "get_top_volume_stocks":
                     System.out.println("거래량 상위 종목 조회");
                     Map<String, Object> volumeResult = kiwoomApiService.getDailyTopVolumeStocks();
-                    return "거래량 상위 종목: " + volumeResult.toString();
+                    return summarizeVolumeData(volumeResult);
                     
                 case "get_latest_news":
                     int page = arguments.has("page") ? arguments.get("page").asInt() : 1;
                     System.out.println("최신 뉴스 조회: 페이지 " + page);
                     List<Map<String, Object>> newsResult = getLatestNewsFromDB(page);
-                    return "최신 뉴스: " + newsResult.toString();
+                    return summarizeNewsList(newsResult);
                     
                 case "search_news":
                     String keyword = arguments.get("keyword").asText();
                     int searchPage = arguments.has("page") ? arguments.get("page").asInt() : 1;
                     System.out.println("키워드 뉴스 검색: " + keyword + ", 페이지 " + searchPage);
                     List<Map<String, Object>> searchResult = searchNewsByKeyword(keyword, searchPage);
-                    return "검색된 뉴스: " + searchResult.toString();
+                    return summarizeNewsList(searchResult);
                     
                 default:
                     return "알 수 없는 함수입니다: " + functionName;
@@ -290,6 +344,86 @@ public class ChatGPTService {
             e.printStackTrace();
             return "함수 실행 중 오류가 발생했습니다: " + e.getMessage();
         }
+    }
+    
+    /**
+     * 차트 데이터 요약 (토큰 절약)
+     */
+    private String summarizeChartData(Map<String, Object> chartResult) {
+        if (chartResult == null || chartResult.isEmpty()) {
+            return "차트 데이터를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("주식 차트 데이터:\n");
+        
+        // 주요 정보만 추출 (전체 데이터가 아닌 핵심 요약만)
+        if (chartResult.containsKey("output1")) {
+            Object output1 = chartResult.get("output1");
+            summary.append("기본 정보: ").append(output1.toString(), 0, Math.min(200, output1.toString().length())).append("\n");
+        }
+        
+        if (chartResult.containsKey("output2")) {
+            summary.append("최근 5일간의 차트 데이터 조회 완료\n");
+        }
+        
+        return summary.toString();
+    }
+    
+    /**
+     * 거래량 데이터 요약 (토큰 절약)
+     */
+    private String summarizeVolumeData(Map<String, Object> volumeResult) {
+        if (volumeResult == null || volumeResult.isEmpty()) {
+            return "거래량 데이터를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("거래량 상위 종목:\n");
+        
+        // 상위 5개 종목만 간략히 표시
+        if (volumeResult.containsKey("output")) {
+            Object output = volumeResult.get("output");
+            String outputStr = output.toString();
+            summary.append(outputStr.substring(0, Math.min(500, outputStr.length())));
+            if (outputStr.length() > 500) {
+                summary.append("... (더 보기)");
+            }
+        }
+        
+        return summary.toString();
+    }
+    
+    /**
+     * 뉴스 리스트 요약 (토큰 절약)
+     */
+    private String summarizeNewsList(List<Map<String, Object>> newsList) {
+        if (newsList == null || newsList.isEmpty()) {
+            return "뉴스를 찾을 수 없습니다.";
+        }
+        
+        StringBuilder summary = new StringBuilder("뉴스 목록:\n");
+        
+        // 최대 5개 뉴스만 표시
+        int count = 0;
+        for (Map<String, Object> news : newsList) {
+            if (count >= 5) break;
+            
+            String title = (String) news.get("title");
+            String label = (String) news.get("label");
+            
+            // 제목이 너무 길면 자르기
+            if (title != null) {
+                if (title.length() > 100) {
+                    title = title.substring(0, 100) + "...";
+                }
+                summary.append(++count).append(". [").append(label).append("] ").append(title).append("\n");
+            }
+        }
+        
+        if (newsList.size() > 5) {
+            summary.append("... 외 ").append(newsList.size() - 5).append("개 뉴스");
+        }
+        
+        return summary.toString();
     }
     
     /**
@@ -304,11 +438,11 @@ public class ChatGPTService {
             
             System.out.println("데이터베이스 연결 시도 중...");
             try (Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/fivesense", "postgres", "1234")) {
+                    "jdbc:postgresql://db:5432/fivesense", "postgres", "1234")) {
                 System.out.println("데이터베이스 연결 성공!");
                 
                 PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT title, link, label FROM company_news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
+                    "SELECT title, link, label FROM news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
                 System.out.println("SQL 쿼리 실행 중...");
                 
                 ResultSet rs = stmt.executeQuery();
@@ -346,10 +480,10 @@ public class ChatGPTService {
             
             System.out.println("데이터베이스 연결 시도 중...");
             try (Connection conn = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/fivesense", "postgres", "1234")) {
+                    "jdbc:postgresql://db:5432/fivesense", "postgres", "1234")) {
                 System.out.println("데이터베이스 연결 성공!");
                 
-                String sql = "SELECT title, link, label FROM company_news WHERE title ILIKE ? OR label ILIKE ? ORDER BY pub_date DESC LIMIT ? OFFSET ?";
+                String sql = "SELECT title, link, label FROM news WHERE title ILIKE ? OR label ILIKE ? ORDER BY pub_date DESC LIMIT ? OFFSET ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 String searchPattern = "%" + keyword + "%";
                 stmt.setString(1, searchPattern);

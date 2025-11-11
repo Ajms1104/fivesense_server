@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.socket.CloseStatus;
@@ -108,6 +109,16 @@ public class KiwoomApiService {
 
     private void initWebSocketConnection() {
         try {
+            // 기존 연결이 있다면 종료
+            if (socketSession != null && socketSession.isOpen()) {
+                try {
+                    socketSession.close();
+                    System.out.println("기존 WebSocket 연결을 종료했습니다.");
+                } catch (IOException e) {
+                    System.err.println("기존 WebSocket 연결 종료 중 오류: " + e.getMessage());
+                }
+            }
+
             WebSocketClient client = new StandardWebSocketClient();
             WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
@@ -115,21 +126,11 @@ public class KiwoomApiService {
                 @Override
                 public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
                     socketSession = session;
-                    try {
-                        // 로그인 패킷 전송
-                        Map<String, Object> loginMessage = new HashMap<>();
-                        loginMessage.put("trnm", "LOGIN");
-                        loginMessage.put("token", accessToken);
-                        
-                        
-                        System.out.println("실시간 시세 서버로 로그인 패킷을 전송합니다.");
-                        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(loginMessage)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    // 로그인 패킷 전송
                     Map<String, Object> loginMessage = new HashMap<>();
                     loginMessage.put("trnm", "LOGIN");
                     loginMessage.put("token", accessToken);
+                    
                     System.out.println("실시간 시세 서버로 로그인 패킷을 전송합니다. Token: " + accessToken);
                     session.sendMessage(new TextMessage(objectMapper.writeValueAsString(loginMessage)));
                 }
@@ -162,14 +163,34 @@ public class KiwoomApiService {
                 @Override
                 public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus status) {
                     socketSession = null;
+                    System.out.println("WebSocket 연결이 종료되었습니다. Status: " + status);
                     // 재연결 로직은 필요에 따라 구현 (예: 5초 후 재시도)
                     // initWebSocketConnection(); 
                 }
             };
             client.execute(handler, headers, URI.create(this.websocketUrl)).get();
         } catch (Exception e) {
+            System.err.println("WebSocket 연결 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 23시간마다 액세스 토큰을 자동으로 갱신합니다.
+     * 토큰 유효시간이 24시간이므로 만료 전에 재발급받습니다.
+     */
+    @Scheduled(fixedDelay = 82800000, initialDelay = 82800000) // 23시간 = 82,800,000 밀리초
+    public void refreshAccessToken() {
+        System.out.println("=== 액세스 토큰 자동 갱신 시작 ===");
+        getAccessToken();
+        
+        if (accessToken != null && !accessToken.isEmpty()) {
+            System.out.println("토큰 갱신 성공. WebSocket 연결을 재시작합니다.");
+            initWebSocketConnection();
+        } else {
+            System.err.println("토큰 갱신 실패. WebSocket 연결을 재시작하지 않습니다.");
+        }
+        System.out.println("=== 액세스 토큰 자동 갱신 완료 ===");
     }
 
     // 주식 차트 조회

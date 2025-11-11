@@ -62,11 +62,11 @@ public List<Map<String, Object>> getLatestNews(@RequestParam(value = "page", def
 
         System.out.println("데이터베이스 연결 시도 중...");
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/fivesense", "postgres", "1234")) {
+                "jdbc:postgresql://db:5432/fivesense", "postgres", "1234")) {
             System.out.println("데이터베이스 연결 성공!");
 
             PreparedStatement stmt = conn.prepareStatement(
-                "SELECT title, link FROM company_news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
+                "SELECT title, link ,label FROM news ORDER BY pub_date DESC LIMIT 40 OFFSET 0");
             System.out.println("SQL 쿼리 실행 중...");
 
             ResultSet rs = stmt.executeQuery();
@@ -78,6 +78,7 @@ public List<Map<String, Object>> getLatestNews(@RequestParam(value = "page", def
                     Map<String, Object> news = new HashMap<>();
                     news.put("title", rs.getString("title"));
                     news.put("link", rs.getString("link"));
+                    news.put("label",rs.getString("label"));
                     newsList.add(news);
                 }
                 idx++;
