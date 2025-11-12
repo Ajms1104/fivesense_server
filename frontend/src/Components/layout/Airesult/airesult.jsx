@@ -1,6 +1,6 @@
 // src/Components/layout/Airesult/AiResult.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import style from './airesult.module.css';
 import { getFormattedDate, stockNameData, lstmAccuracyData, predictedPriceData, changeRateData, finbertSentimentData } from './mockData';
 
@@ -86,6 +86,10 @@ const AiResult = () => {
     lstmAccuracy: 0,
   });
   const [finbertData, setFinbertData] = useState({ score: 0, confidence: 82.49 });
+  
+  // [시니어 멘토링] 탭 인디케이터를 위한 ref와 상태 추가
+  const activeTabRef = useRef(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({});
 
   useEffect(() => {
     // 종목이 변경될 때마다 모든 관련 데이터를 업데이트합니다.
@@ -100,16 +104,28 @@ const AiResult = () => {
     }));
   }, [selectedStock]);
   
+  // [시니어 멘토링] 컴포넌트가 마운트될 때 인디케이터 위치를 계산합니다.
+  useEffect(() => {
+    if (activeTabRef.current) {
+        const { offsetLeft, clientWidth } = activeTabRef.current;
+        setIndicatorStyle({ left: offsetLeft, width: clientWidth });
+    }
+  }, []);
+
   const handleStockChange = (event) => {
     setSelectedStock(event.target.value);
   };
 
   return (
-    <div className={`${style.container} ${style.enter}`}>
-      <div className={style.tabContainer}>
-        <button className={style.tabButton}>AI 주가 예측</button>
+    // [시니어 멘토링] CSS와 일치하도록 JSX 구조를 수정합니다.
+    <div className={style.container}>
+      <div className={style.tab_container}>
+        <button ref={activeTabRef} className={`${style.tab_button} ${style.active}`}>
+            AI 주가 예측
+        </button>
+        <div className={style.active_indicator} style={indicatorStyle} />
       </div>
-      <div className={style.content}>
+      <div className={style.content_container}>
         <Header selectedStock={selectedStock} handleStockChange={handleStockChange} />
         <TotalPrediction price={predictionData.price} changeRate={predictionData.changeRate} />
         <div className={style.modelCardsContainer}>
